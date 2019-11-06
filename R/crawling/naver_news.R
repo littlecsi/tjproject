@@ -26,7 +26,9 @@ for(id in sec_id) {
     html <- get_html(url)
     item <- html %>% html_nodes('.ranking_item')
     
-    category <- html %>% html_nodes('.ranking_category_item is_selected') %>% html_nodes('.is_selected')%>% html_nodes('a') %>% html_text()
+    category <- html %>% html_nodes('.is_selected') %>% html_nodes('a') %>% html_text()
+    category <- category[2]
+    category <- rep(gsub('선택됨', '', category), 30)
     
     title <- item %>% html_nodes('.ranking_headline') %>% html_nodes('a') %>% html_text()
     source <- item %>% html_nodes('.ranking_office') %>% html_text()
@@ -41,7 +43,9 @@ url <- paste(url_1, url_2, '100', url_3, sep='')
 html <- get_html(url)
 item <- html %>% html_nodes('.ranking_item')
 
-category <- html %>% html_nodes('.ranking_category_item is_selected') %>% html_nodes('a') %>% html_text()
+category <- html %>% html_nodes('.is_selected') %>% html_nodes('a') %>% html_text()
+category <- category[2]
+category <- rep(gsub('선택됨', '', category), 30)
 
 title <- item %>% html_nodes('.ranking_headline') %>% html_nodes('a') %>% html_text()
 source <- item %>% html_nodes('.ranking_office') %>% html_text()
