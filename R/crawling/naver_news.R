@@ -57,9 +57,13 @@ for(y in year) {
     for(m in month) {
         for(d in day) {
             # Disgard months with no 31st (except February)
-            if(m %in% c('04','06','09','11') & d == 31) { next }
+            if(m %in% c('04','06','09','11') & d == 31) {
+                next
+            }
             # Disgard February (special cases)
-            if(m %in% c('02') & d >= 30) { next }
+            if(m %in% c('02') & d >= 30) {
+                next
+            }
             
             # Extract all category in this date
             for(id in sec_id) {
@@ -71,7 +75,9 @@ for(y in year) {
                 url <- paste(url_1, url_2, id, url_3, date, sep='')
                 
                 # checks if url is loadable. If not, it jumps to the next one
-                if(check_url(url) == FALSE) { next }
+                if(check_url(url) == FALSE) {
+                    next
+                }
 
                 # loads the HTML code from the URL
                 html <- get_html(url)
@@ -100,5 +106,4 @@ for(y in year) {
         }
     }
 }
-
 write.csv(df, 'news.csv')
