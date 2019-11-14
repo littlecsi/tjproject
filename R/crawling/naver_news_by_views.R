@@ -27,6 +27,8 @@ year <- as.character(c(2019))
 month <- c('01','02','03','04','05','06','07','08','09','10','11','12')
 day <- c(c('01','02','03','04','05','06','07','08','09'), 10:31)
 
+stopDate <- '20191114'
+
 flag = F
 for(y in year) {
     if(flag == T) {
@@ -48,7 +50,9 @@ for(y in year) {
             }
             
             # Main
-            stopDate <- '20191114'
+            Sys.setenv("http_proxy"="")
+            Sys.setenv("no_proxy"=T)
+            Sys.setenv("no_proxy"=1)
             
             url <- 'https://news.naver.com/main/ranking/popularDay.nhn?rankingType=popular_day&sectionId=100&date='
             date <- paste(y, m, d, sep='')
@@ -71,6 +75,9 @@ for(y in year) {
             if(len == 0) { # If nothing is crawled, skip
                 next
             }
+            if(length(view) == 0) {
+                view <- rep(NA, len)
+            }
             
             # pre-processing
             subti <- clean(subti) # removes whitespace, \t, \r, \n
@@ -79,8 +86,10 @@ for(y in year) {
             tdf <- data.frame(rank=c(1:len), title=title, subti=subti, source=source, view=view, date=rep(date, len))
             
             df <- rbind(tdf, df)
+            
+            print(date)
         }
     }
-    filename <- paste('view_', year, '.csv', sep='')
+    filename <- paste('view_', y, '.csv', sep='')
     write.csv(df, filename)
 }

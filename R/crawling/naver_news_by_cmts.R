@@ -23,9 +23,10 @@ cleanc <- function(x) { # Function to remove commas in comments
 
 ####################################################################################################
 # Crawling
-year <- as.character(c(2019))
+year <- as.character(c(2013:2019))
 month <- c('01','02','03','04','05','06','07','08','09','10','11','12')
 day <- c(c('01','02','03','04','05','06','07','08','09'), 10:31)
+stopDate <- '20191114'
 
 flag = F
 for(y in year) {
@@ -48,7 +49,9 @@ for(y in year) {
             }
             
             # Main
-            stopDate <- '20191114'
+            Sys.setenv("http_proxy"="")
+            Sys.setenv("no_proxy"=T)
+            Sys.setenv("no_proxy"=1)
             
             url <- 'https://news.naver.com/main/ranking/popularDay.nhn?rankingType=popular_day&sectionId=100&date='
             date <- paste(y, m, d, sep='')
@@ -57,6 +60,7 @@ for(y in year) {
                 flag = T
                 break
             }
+            print(date)
             
             html <- read_html(paste(url, date, sep=''))
             list <- html %>% html_nodes('.ranking_list')
@@ -71,16 +75,19 @@ for(y in year) {
             if(len == 0) { # If nothing is crawled, skip
                 next
             }
+            if(length(cmt) == 0) {
+                cmt <- rep(NA, len)
+            }
             
             # pre-processing
             subti <- clean(subti) # removes whitespace, \t, \r, \n
-            cmt <- cleanc(view) # removes commas
+            cmt <- cleanc(cmt) # removes commas
             
             tdf <- data.frame(rank=c(1:len), title=title, subti=subti, source=source, cmt=cmt, date=rep(date, len))
             
             df <- rbind(tdf, df)
         }
     }
-    filename <- paste('cmt_', year, '.csv', sep='')
+    filename <- paste('cmt_', y, '.csv', sep='')
     write.csv(df, filename)
 }
