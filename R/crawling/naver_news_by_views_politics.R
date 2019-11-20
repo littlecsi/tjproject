@@ -25,7 +25,7 @@ cleanv <- function(x) { # Function to remove commas in view
 
 ####################################################################################################
 # Crawling
-remDr <- remoteDriver(remoteServerAdd='localhost', port=4445L, browserName='chrome')
+remDr <- remoteDriver(remoteServerAdd='localhost', port=5L, browserName='chrome')
 remDr$open()
 
 year <- as.character(c(2018:2019))
@@ -133,7 +133,7 @@ for(y in year) {
             print(dat)
         }
         sheName <- paste(month_eng[mcnt], sep='')
-        file <- paste('D:/GitHub/tjproject/R/resources/', y, '_view_data.xlsx', sep='')
+        file <- paste('D:/GitHub/tjproject/R/resources/', y, '_view_data_politics.xlsx', sep='')
         write.xlsx(df, file, sheetName=sheName, col.names=T, row.names=F, append=T, password=NULL, showNA=T)
     }
 }
