@@ -83,13 +83,52 @@ for(y in year) {
             if(len == 0) { next } # If nothing is crawled, skip
             if(length(view) == 0) { view <- rep(NA, len) }
             
+            # Selenium crawling
+            urls <- list %>% html_nodes('.ranking_headline') %>% html_nodes('a') %>% html_attr('href')
+            iter <- c(1:length(title))
+            
+            currCmt <- NULL; deleted <- NULL; brokenPolicy <- NULL; maleRatio <- NULL; femaleRatio <- NULL;
+            X10 <- NULL; X20 <- NULL; X30 <- NULL; X40 <- NULL; X50 <- NULL; X60 <- NULL;
+            
+            for(i in iter) {
+                url <- 'https://news.naver.com'
+                url <- paste(url, urls[i], sep='')
+                
+                remDr$navigate(url) # navigate to the corresponding news article
+                
+                print('CP1')
+                Sys.sleep(5)
+                elm <- remDr$findElements('class name','u_cbox_info_txt')
+                
+                currCmt <- c(currCmt, elm[[1]]$getElementText())
+                deleted <- c(deleted, elm[[2]]$getElementText())
+                brokenPolicy <- c(brokenPolicy, elm[[3]]$getElementText())
+                
+                print('CP2')
+                Sys.sleep(5)
+                elm <- remDr$findElements('class name','u_cbox_chart_per')
+                
+                maleRatio <- c(maleRatio, elm[[1]]$getElementText())
+                femaleRatio <- c(femaleRatio, elm[[2]]$getElementText())
+                X10 <- c(X10, elm[[3]]$getElementText())
+                X20 <- c(X20, elm[[4]]$getElementText())
+                X30 <- c(X30, elm[[5]]$getElementText())
+                X40 <- c(X40, elm[[6]]$getElementText())
+                X50 <- c(X50, elm[[7]]$getElementText())
+                X60 <- c(X60, elm[[8]]$getElementText())
+            }
+            
+            infoDF <- data.frame(currCmt=currCmt, deleted=deleted, brokenPolicy=brokenPolicy, maleRatio=maleRatio, femaleRatio=femaleRatio, X10=X10, X20=X20, X30=X30, X40=X40, X50=X50, X60=X60)
+            
             # pre-processing
             subti <- clean(subti) # removes whitespace, \t, \r, \n
             view <- cleanv(view) # removes commas
             
             tdf <- data.frame(rank=c(1:len), title=title, subti=subti, source=source, view=view, date=rep(dat, len))
             
-            df <- rbind(tdf, df)
+            df <- rbind(df, tdf)
+            
+            df <- cbind(df, infoDF)
             
             print(dat)
         }
