@@ -111,7 +111,7 @@ for(y in year) {
             title <- list %>% html_nodes('.ranking_headline') %>% html_nodes('a') %>% html_text()
             subti <- list %>% html_nodes('.ranking_lede') %>% html_text()
             source <- list %>% html_nodes('.ranking_office') %>% html_text()
-            cmt <- list %>% html_nodes('.count_cmt') %>% html_text()
+            cmt <- list %>% html_nodes('.ranking_view') %>% html_text()
             
             len <- length(title) # number of articles in this page
             
