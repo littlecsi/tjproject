@@ -22,6 +22,23 @@ cleanc <- function(x) { # Function to remove commas in comments
     x <- gsub(',', '', x)
     return(x)
 }
+chkURL <- function(url) {
+    out <- tryCatch(
+        {
+            html <- read_html(url)
+            return(html)
+        },
+        error=function(cond) {
+            return(F)
+        },
+        warning=function(cond) {
+            return(F)
+        },
+        finally={
+            cat('chkURL function called\n')
+        }
+    )
+}
 
 ####################################################################################################
 # Crawling
@@ -33,7 +50,9 @@ month <- c('01','02','03','04','05','06','07','08','09','10','11','12')
 month_eng <- c('Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec')
 day <- c(c('01','02','03','04','05','06','07','08','09'), 10:31)
 
-startDate <- '20181201'
+sleepT <- 1/4
+
+startDate <- '20191001'
 stopDate <- '20191031'
 
 finFlag = F
@@ -48,10 +67,10 @@ for(y in year) {
         
         mcnt <- mcnt + 1 # Incrementing index 
         
-        df <- data.frame(rank=0, title=0, subti=0, source=0, cmt=0, date=0)
+        df <- data.frame(rank=c(), title=c(), subti=c(), source=c(), cmt=c(), date=c())
         for(d in day) {
+            if(finFlag == T) { break }
             if(as.integer(d) < as.integer(str_sub(startDate, 7, 8))) { next }
-            
             # Disgard months with no 31st (except February)
             if(m %in% c('04','06','09','11') & d == 31) { next }
             # Disgard February (special cases)
@@ -66,11 +85,17 @@ for(y in year) {
             
             dat <- paste(y, m, d, sep='')
             
-            if(dat == stopDate) { finFlag = T; break }
+            if(dat == stopDate) { finFlag = T }
             
             url <- paste(url, dat, sep='')
             
-            html <- read_html(url)
+            html <- chkURL(url)
+            
+            # Checks URL
+            while(is.list(html) == F) {
+                html <- chkURL(url)
+            }
+            
             list <- html %>% html_nodes('.ranking_list') %>% html_nodes('.ranking_text')
             
             title <- list %>% html_nodes('.ranking_headline') %>% html_nodes('a') %>% html_text()
@@ -98,23 +123,43 @@ for(y in year) {
                 
                 remDr$navigate(url) # navigate to the corresponding news article
                 
-                Sys.sleep(0.5)
-                elm <- remDr$findElements('class name','u_cbox_info_txt')
+                Sys.sleep(sleepT)
+                elm <- remDr$findElements('class','u_cbox_info_txt')
                 
-                currCmt <- c(currCmt, elm[[1]]$getElementText())
-                deleted <- c(deleted, elm[[2]]$getElementText())
-                brokenPolicy <- c(brokenPolicy, elm[[3]]$getElementText())
+                cnt <- 1
+                while(length(elm) == 0) {
+                    remDr$navigate(url)
+                    Sys.sleep(sleepT * 2^cnt)
+                    
+                    elm <- remDr$findElements('class','u_cbox_info_txt')
+                    cat(sleepT * 2^cnt, '\n')
+                    cnt <- cnt + 1
+                }
                 
-                elm <- remDr$findElements('class name','u_cbox_chart_per')
+                currCmt <- c(currCmt, as.character(elm[[1]]$getElementText()))
+                deleted <- c(deleted, as.character(elm[[2]]$getElementText()))
+                brokenPolicy <- c(brokenPolicy, as.character(elm[[3]]$getElementText()))
                 
-                maleRatio <- c(maleRatio, elm[[1]]$getElementText())
-                femaleRatio <- c(femaleRatio, elm[[2]]$getElementText())
-                X10 <- c(X10, elm[[3]]$getElementText())
-                X20 <- c(X20, elm[[4]]$getElementText())
-                X30 <- c(X30, elm[[5]]$getElementText())
-                X40 <- c(X40, elm[[6]]$getElementText())
-                X50 <- c(X50, elm[[7]]$getElementText())
-                X60 <- c(X60, elm[[8]]$getElementText())
+                elm <- remDr$findElements('class','u_cbox_chart_per')
+                
+                cnt <- 1
+                while(length(elm) == 0) {
+                    remDr$navigate(url)
+                    Sys.sleep(sleepT * 2^cnt)
+                    
+                    elm <- remDr$findElements('class','u_cbox_chart_per')
+                    cat(sleepT * 2^cnt, '\n')
+                    cnt <- cnt + 1
+                }
+                
+                maleRatio <- c(maleRatio, as.character(elm[[1]]$getElementText()))
+                femaleRatio <- c(femaleRatio, as.character(elm[[2]]$getElementText()))
+                X10 <- c(X10, as.character(elm[[3]]$getElementText()))
+                X20 <- c(X20, as.character(elm[[4]]$getElementText()))
+                X30 <- c(X30, as.character(elm[[5]]$getElementText()))
+                X40 <- c(X40, as.character(elm[[6]]$getElementText()))
+                X50 <- c(X50, as.character(elm[[7]]$getElementText()))
+                X60 <- c(X60, as.character(elm[[8]]$getElementText()))
             }
             
             infoDF <- data.frame(currCmt=currCmt, deleted=deleted, brokenPolicy=brokenPolicy, maleRatio=maleRatio, femaleRatio=femaleRatio, X10=X10, X20=X20, X30=X30, X40=X40, X50=X50, X60=X60)
@@ -125,9 +170,9 @@ for(y in year) {
             
             tdf <- data.frame(rank=c(1:len), title=title, subti=subti, source=source, cmt=cmt, date=rep(dat, len))
             
+            tdf <- cbind(tdf, infoDF)
+            
             df <- rbind(df, tdf)
-
-            df <- cbind(df, infoDF)
             
             print(dat)
         }
