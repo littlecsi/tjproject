@@ -1,12 +1,12 @@
 ####################################################################################################
-# Naver News Page by Most Comments
+# Naver News Page by Most Views
 # Category : Politics
 ####################################################################################################
 # Library Import
-library(RSelenium)
 library(rvest)
 library(xlsx)
 library(stringr)
+library(RSelenium)
 
 ####################################################################################################
 # Functions
@@ -18,7 +18,7 @@ clean <- function(x) { # Function to remove new lines, tabs, etc...
     
     return(x)
 }
-cleanc <- function(x) { # Function to remove commas in comments
+cleanc <- function(x) { # Function to remove commas in view
     x <- gsub(',', '', x)
     return(x)
 }
@@ -39,6 +39,16 @@ chkURL <- function(url) {
         }
     )
 }
+chkElem <- function(elem) {
+    out <- tryCatch(
+        {
+            return(remDr$findElement(elem))
+        },
+        error=function(cond) {
+            return(F)
+        }
+    )
+}
 
 ####################################################################################################
 # Crawling
@@ -52,7 +62,7 @@ day <- c(c('01','02','03','04','05','06','07','08','09'), 10:31)
 
 sleepT <- 1/4
 
-startDate <- '20191001'
+startDate <- '20190101'
 stopDate <- '20191031'
 
 finFlag = F
@@ -67,7 +77,7 @@ for(y in year) {
         
         mcnt <- mcnt + 1 # Incrementing index 
         
-        df <- data.frame(rank=c(), title=c(), subti=c(), source=c(), cmt=c(), date=c())
+        df <- data.frame(rank=c(), title=c(), subti=c(), source=c(), view=c(), date=c())
         for(d in day) {
             if(finFlag == T) { break }
             if(as.integer(d) < as.integer(str_sub(startDate, 7, 8))) { next }
@@ -81,9 +91,11 @@ for(y in year) {
             Sys.setenv("no_proxy"=T)        # To fix some 
             Sys.setenv("no_proxy"=1)        # Proxy problems
             
-            url <- 'https://news.naver.com/main/ranking/popularMemo.nhn?rankingType=popular_memo&sectionId=100&date='
+            url <- 'https://news.naver.com/main/ranking/popularDay.nhn?rankingType=popular_day&sectionId=102&date='
             
             dat <- paste(y, m, d, sep='')
+            
+            print(dat) # Prints out the date that the loop is working on
             
             if(dat == stopDate) { finFlag = T }
             
@@ -101,15 +113,15 @@ for(y in year) {
             title <- list %>% html_nodes('.ranking_headline') %>% html_nodes('a') %>% html_text()
             subti <- list %>% html_nodes('.ranking_lede') %>% html_text()
             source <- list %>% html_nodes('.ranking_office') %>% html_text()
-            cmt <- list %>% html_nodes('.count_cmt') %>% html_text()
+            view <- list %>% html_nodes('.ranking_view') %>% html_text()
             
             len <- length(title) # number of articles in this page
             
             if(len == 0) { next } # If nothing is crawled, skip
-            if(length(cmt) == 0) { cmt <- rep(NA, len) }
+            if(length(view) == 0) { view <- rep(NA, len) }
             
             # Selenium crawling
-            urls <- list %>% html_nodes('.count_cmt') %>% html_attr('href')
+            urls <- list %>% html_nodes('.ranking_headline') %>% html_nodes('a') %>% html_attr('href')
             iter <- c(1:length(title))
             
             currCmt <- c(); deleted <- c(); brokenPolicy <- c(); maleRatio <- c(); femaleRatio <- c();
@@ -118,16 +130,22 @@ for(y in year) {
             for(i in iter) {
                 cat('-----', i, '-----\n')
                 
-                url <- 'https://news.naver.com'
-                url <- paste(url, urls[i], sep='')
+                url <- 'https://news.naver.com/main/ranking/read.nhn?'
                 
-                remDr$navigate(url) # navigate to the corresponding news article
+                u <- urls[i]
+                
+                oid <- u %>% str_extract('oid=[0-9]+') %>% str_sub(5)
+                aid <- u %>% str_extract('aid=[0-9]+') %>% str_sub(5)
+                
+                url <- paste(url, 'm_view=1&rankingType=popular_day&oid=', oid,'&aid=', aid, '&date=', dat, '&type=1&rankingSectionId=102&rankingSeq=', i, sep='')
+                
+                remDr$navigate(url)
                 
                 Sys.sleep(sleepT)
                 elm <- remDr$findElements('class','u_cbox_info_txt')
                 
                 cnt <- 1
-                while(length(elm) == 0) {
+                while(length(elm) == 0) { # If nothing is crawled, then refresh the page and wait longer
                     remDr$navigate(url)
                     Sys.sleep(sleepT * 2^cnt)
                     
@@ -136,14 +154,43 @@ for(y in year) {
                     cnt <- cnt + 1
                 }
                 
-                currCmt <- c(currCmt, as.character(elm[[1]]$getElementText()))
+                currCmt <- cleanc(c(currCmt, as.character(elm[[1]]$getElementText())))
+                
+                if(is.na(as.integer(currCmt[i]))) { # If current comment is not crawled, change to NA
+                    currCmt[i] = NA
+                    deleted <- c(deleted, NA)
+                    brokenPolicy <- c(brokenPolicy, NA)
+                    maleRatio <- c(maleRatio, NA)
+                    femaleRatio <- c(femaleRatio, NA)
+                    X10 <- c(X10, NA)
+                    X20 <- c(X20, NA)
+                    X30 <- c(X30, NA)
+                    X40 <- c(X40, NA)
+                    X50 <- c(X50, NA)
+                    X60 <- c(X60, NA)
+                    print("No Data - appended NA values")
+                    next()
+                }
                 deleted <- c(deleted, as.character(elm[[2]]$getElementText()))
                 brokenPolicy <- c(brokenPolicy, as.character(elm[[3]]$getElementText()))
+                
+                if(as.integer(currCmt[i]) < 100) { # If current comment count is less than 100, append NA values to the rest
+                    maleRatio <- c(maleRatio, NA)
+                    femaleRatio <- c(femaleRatio, NA)
+                    X10 <- c(X10, NA)
+                    X20 <- c(X20, NA)
+                    X30 <- c(X30, NA)
+                    X40 <- c(X40, NA)
+                    X50 <- c(X50, NA)
+                    X60 <- c(X60, NA)
+                    print("No Data - appended NA values")
+                    next()
+                }
                 
                 elm <- remDr$findElements('class','u_cbox_chart_per')
                 
                 cnt <- 1
-                while(length(elm) == 0) {
+                while(length(elm) == 0) { # If nothing is crawled, then refresh the page and wait longer
                     remDr$navigate(url)
                     Sys.sleep(sleepT * 2^cnt)
                     
@@ -166,18 +213,16 @@ for(y in year) {
             
             # pre-processing
             subti <- clean(subti) # removes whitespace, \t, \r, \n
-            cmt <- cleanc(cmt); cmt <- clean(cmt) # removes commas
+            view <- cleanc(view); view <- clean(view) # removes commas
             
-            tdf <- data.frame(rank=c(1:len), title=title, subti=subti, source=source, cmt=cmt, date=rep(dat, len))
+            tdf <- data.frame(rank=c(1:len), title=title, subti=subti, source=source, view=view, date=rep(dat, len))
             
             tdf <- cbind(tdf, infoDF)
             
             df <- rbind(df, tdf)
-            
-            print(dat)
         }
         sheName <- paste(month_eng[mcnt], sep='')
-        file <- paste('D:/GitHub/tjproject/R/resources/', y, '_comment_data_politics.xlsx', sep='')
+        file <- paste('D:/GitHub/tjproject/R/resources/', y, '_view_data_soc.xlsx', sep='')
         write.xlsx(df, file, sheetName=sheName, col.names=T, row.names=F, append=T, password=NULL, showNA=T)
     }
 }

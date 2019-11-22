@@ -1,12 +1,12 @@
 ####################################################################################################
-# Naver News Page by Most Views
+# Naver News Page by Most Comments
 # Category : Politics
 ####################################################################################################
 # Library Import
+library(RSelenium)
 library(rvest)
 library(xlsx)
 library(stringr)
-library(RSelenium)
 
 ####################################################################################################
 # Functions
@@ -18,7 +18,7 @@ clean <- function(x) { # Function to remove new lines, tabs, etc...
     
     return(x)
 }
-cleanc <- function(x) { # Function to remove commas in view
+cleanc <- function(x) { # Function to remove commas in comments
     x <- gsub(',', '', x)
     return(x)
 }
@@ -91,9 +91,11 @@ for(y in year) {
             Sys.setenv("no_proxy"=T)        # To fix some 
             Sys.setenv("no_proxy"=1)        # Proxy problems
             
-            url <- 'https://news.naver.com/main/ranking/popularDay.nhn?rankingType=popular_day&sectionId=100&date='
+            url <- 'https://news.naver.com/main/ranking/popularMemo.nhn?rankingType=popular_memo&sectionId=101&date='
             
             dat <- paste(y, m, d, sep='')
+
+            print(dat)
             
             if(dat == stopDate) { finFlag = T }
             
@@ -102,16 +104,14 @@ for(y in year) {
             html <- chkURL(url)
             
             # Checks URL
-            while(is.list(html) == F) {
-                html <- chkURL(url)
-            }
+            while(is.list(html) == F) { html <- chkURL(url) }
             
             list <- html %>% html_nodes('.ranking_list') %>% html_nodes('.ranking_text')
             
             title <- list %>% html_nodes('.ranking_headline') %>% html_nodes('a') %>% html_text()
             subti <- list %>% html_nodes('.ranking_lede') %>% html_text()
             source <- list %>% html_nodes('.ranking_office') %>% html_text()
-            cmt <- list %>% html_nodes('.ranking_view') %>% html_text()
+            cmt <- list %>% html_nodes('.count_cmt') %>% html_text()
             
             len <- length(title) # number of articles in this page
             
@@ -119,7 +119,7 @@ for(y in year) {
             if(length(cmt) == 0) { cmt <- rep(NA, len) }
             
             # Selenium crawling
-            urls <- list %>% html_nodes('.ranking_headline') %>% html_nodes('a') %>% html_attr('href')
+            urls <- list %>% html_nodes('.count_cmt') %>% html_attr('href')
             iter <- c(1:length(title))
             
             currCmt <- c(); deleted <- c(); brokenPolicy <- c(); maleRatio <- c(); femaleRatio <- c();
@@ -128,16 +128,10 @@ for(y in year) {
             for(i in iter) {
                 cat('-----', i, '-----\n')
                 
-                url <- 'https://news.naver.com/main/ranking/read.nhn?'
+                url <- 'https://news.naver.com'
+                url <- paste(url, urls[i], sep='')
                 
-                u <- urls[i]
-                
-                oid <- u %>% str_extract('oid=[0-9]+') %>% str_sub(5)
-                aid <- u %>% str_extract('aid=[0-9]+') %>% str_sub(5)
-                
-                url <- paste(url, 'm_view=1&includeAllCount=true&rankingType=popular_day&oid=', oid,'&aid=', aid, '&date=', dat, '&type=1&rankingSectionId=100&rankingSeq=', i, sep='')
-                
-                remDr$navigate(url)
+                remDr$navigate(url) # navigate to the corresponding news article
                 
                 Sys.sleep(sleepT)
                 elm <- remDr$findElements('class','u_cbox_info_txt')
@@ -152,11 +146,12 @@ for(y in year) {
                     cnt <- cnt + 1
                 }
                 
-                currCmt <- cleanc(c(currCmt, as.character(elm[[1]]$getElementText())))
-                deleted <- c(deleted, as.character(elm[[2]]$getElementText()))
-                brokenPolicy <- c(brokenPolicy, as.character(elm[[3]]$getElementText()))
-                
-                if(as.integer(currCmt[i]) < 100) {
+                currCmt <- c(currCmt, cleanc(as.character(elm[[1]]$getElementText())))
+
+                if(is.na(as.integer(currCmt[i]))) { # If current comment is not crawled, change to NA
+                    currCmt[i] = NA
+                    deleted <- c(deleted, NA)
+                    brokenPolicy <- c(brokenPolicy, NA)
                     maleRatio <- c(maleRatio, NA)
                     femaleRatio <- c(femaleRatio, NA)
                     X10 <- c(X10, NA)
@@ -165,7 +160,22 @@ for(y in year) {
                     X40 <- c(X40, NA)
                     X50 <- c(X50, NA)
                     X60 <- c(X60, NA)
-                    print("Just Before NEXT")
+                    print("No Data - appended NA values")
+                    next()
+                }
+                deleted <- c(deleted, as.character(elm[[2]]$getElementText()))
+                brokenPolicy <- c(brokenPolicy, as.character(elm[[3]]$getElementText()))
+                
+                if(as.integer(currCmt[i]) < 100) { # If current comment count is less than 100, append NA values to the rest
+                    maleRatio <- c(maleRatio, NA)
+                    femaleRatio <- c(femaleRatio, NA)
+                    X10 <- c(X10, NA)
+                    X20 <- c(X20, NA)
+                    X30 <- c(X30, NA)
+                    X40 <- c(X40, NA)
+                    X50 <- c(X50, NA)
+                    X60 <- c(X60, NA)
+                    print("No Data - appended NA values")
                     next()
                 }
                 
@@ -202,11 +212,9 @@ for(y in year) {
             tdf <- cbind(tdf, infoDF)
             
             df <- rbind(df, tdf)
-            
-            print(dat)
         }
         sheName <- paste(month_eng[mcnt], sep='')
-        file <- paste('D:/GitHub/tjproject/R/resources/', y, '_view_data_politics.xlsx', sep='')
+        file <- paste('D:/GitHub/tjproject/R/resources/', y, '_comment_data_econ.xlsx', sep='')
         write.xlsx(df, file, sheetName=sheName, col.names=T, row.names=F, append=T, password=NULL, showNA=T)
     }
 }
