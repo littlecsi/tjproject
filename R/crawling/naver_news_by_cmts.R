@@ -52,7 +52,7 @@ chkElem <- function(elem) {
 
 ####################################################################################################
 # Crawling
-remDr <- remoteDriver(remoteServerAdd='localhost', port=4445L, browserName='chrome')
+remDr <- remoteDriver(remoteServerAdd='localhost', port=4444L, browserName='chrome')
 remDr$open()
 
 year <- as.character(c(2018:2019))
@@ -62,36 +62,39 @@ day <- c(c('01','02','03','04','05','06','07','08','09'), 10:31)
 
 sleepT <- 1/4
 
-startDate <- '20190101'
+startDate <- '20181101'
 stopDate <- '20191031'
 
+startFlag = F
 finFlag = F
 for(y in year) {
     if(finFlag == T) { break }
-    if(as.integer(y) < as.integer(str_sub(startDate, 1, 4))) { next }
+    if(as.integer(y) < as.integer(str_sub(startDate, 1, 4)) & isFALSE(startFlag)) { next }
     
     mcnt <- 0 # Index to iterate month_eng vector
     for(m in month) {
-        if(finFlag == T) { break }
-        if(as.integer(m) < as.integer(str_sub(startDate, 5, 6))) { next }
-        
         mcnt <- mcnt + 1 # Incrementing index 
         
+        if(finFlag == T) { break }
+        if(as.integer(m) < as.integer(str_sub(startDate, 5, 6)) & isFALSE(startFlag)) { next }
+                
         df <- data.frame(rank=c(), title=c(), subti=c(), source=c(), cmt=c(), date=c())
         for(d in day) {
             if(finFlag == T) { break }
-            if(as.integer(d) < as.integer(str_sub(startDate, 7, 8))) { next }
+            if(as.integer(d) < as.integer(str_sub(startDate, 7, 8)) & isFALSE(startFlag)) { next }
             # Disgard months with no 31st (except February)
             if(m %in% c('04','06','09','11') & d == 31) { next }
             # Disgard February (special cases)
             if(m %in% c('02') & d >= 30) { next }
+            
+            if(isFALSE(startFlag)) { startFlag = T }
             
             # News Information Crawling
             Sys.setenv("http_proxy"="")     # These codes are 
             Sys.setenv("no_proxy"=T)        # To fix some 
             Sys.setenv("no_proxy"=1)        # Proxy problems
             
-            url <- 'https://news.naver.com/main/ranking/popularMemo.nhn?rankingType=popular_memo&sectionId=101&date='
+            url <- 'https://news.naver.com/main/ranking/popularMemo.nhn?rankingType=popular_memo&sectionId=103&date='
             
             dat <- paste(y, m, d, sep='')
 
@@ -214,7 +217,7 @@ for(y in year) {
             df <- rbind(df, tdf)
         }
         sheName <- paste(month_eng[mcnt], sep='')
-        file <- paste('D:/GitHub/tjproject/R/resources/', y, '_comment_data_econ.xlsx', sep='')
+        file <- paste('D:/GitHub/tjproject/R/resources/', y, '_comment_data_life_cult.xlsx', sep='')
         write.xlsx(df, file, sheetName=sheName, col.names=T, row.names=F, append=T, password=NULL, showNA=T)
     }
 }
