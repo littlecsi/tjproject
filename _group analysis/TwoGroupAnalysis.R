@@ -33,6 +33,8 @@ getSectionData <- function(section) {
   dfTwo <- getData(path2, 10)
   
   df <- rbind(dfOne, dfTwo)
+
+  return(df)
 }
 getMonthlyCmt <- function(df) {
   len <- nrow(df)
