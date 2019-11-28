@@ -13,6 +13,7 @@ source_url('https://gist.githubusercontent.com/fawda123/7471137/raw/466c1474d0a5
 # Variable
 pathOne <- "D:/GitHub/tjproject/resources/"
 sections <- c("econ", "IT", "life_cult", "politics", "soc", "world")
+Csections <- c("Economy", "IT", "Life_Cult", "Politics", "Society", "World")
 
 ####################################################################################################
 # Function
@@ -99,6 +100,8 @@ NewsData$currCmt <- as.numeric(NewsData$currCmt)
 NewsData$deleted <- as.numeric(NewsData$deleted)
 NewsData$brokenPolicy <- as.numeric(NewsData$brokenPolicy)
 
+##################################################
+# nnet package
 # One-Hot Encoding
 section.ind <- class.ind(NewsData$section)
 NewsDataE <- cbind(NewsData, section.ind)
@@ -108,7 +111,7 @@ colnames(NewsDataE)
 # [11] "X60"          "section"      "Economy"      "IT"           "Life_Cult"
 # [16] "Politics"     "Society"      "World"
 
-# nnet package
+
 Elen <- nrow(subset(NewsDataE, section == "Economy"))
 Ilen <- nrow(subset(NewsDataE, section == "IT"))
 Llen <- nrow(subset(NewsDataE, section == "Life_Cult"))
@@ -142,17 +145,18 @@ nnPrediction <- predict(nnModel, teX, type="class")
 predTable <- table(nnPrediction, teData$section)
 predAccuracy <- cat(calcAcc(predTable), "%\n")
 
-# # neuralnet package
+##################################################
+# neuralnet package
 # Elen <- nrow(subset(NewsData, section == "Economy"))
 # Ilen <- nrow(subset(NewsData, section == "IT"))
 # Llen <- nrow(subset(NewsData, section == "Life_Cult"))
 # Plen <- nrow(subset(NewsData, section == "Politics"))
 # Slen <- nrow(subset(NewsData, section == "Society"))
 # Wlen <- nrow(subset(NewsData, section == "World"))
-# 
-# Ei <- sample(c(1:Elen), 0.1*Elen); Ii <- sample(c(1:Ilen), 0.1*Ilen); Li <- sample(c(1:Llen), 0.1*Llen);
-# Pi <- sample(c(1:Plen), 0.1*Plen); Si <- sample(c(1:Slen), 0.1*Slen); Wi <- sample(c(1:Wlen), 0.1*Wlen);
-# 
+
+# Ei <- sample(c(1:Elen), 0.75*Elen); Ii <- sample(c(1:Ilen), 0.75*Ilen); Li <- sample(c(1:Llen), 0.75*Llen);
+# Pi <- sample(c(1:Plen), 0.75*Plen); Si <- sample(c(1:Slen), 0.75*Slen); Wi <- sample(c(1:Wlen), 0.75*Wlen);
+
 # idx <- c(
 #     Ei,
 #     Ii + Elen,
@@ -161,31 +165,32 @@ predAccuracy <- cat(calcAcc(predTable), "%\n")
 #     Si + Elen + Ilen + Llen + Plen,
 #     Wi + Elen + Ilen + Llen + Plen + Slen
 # )
-# 
+
+# NewsData$section2 <- factor(NewsData[,12], levels=Csections, labels=c(1:6))
+# NewsData$section2 <- as.numeric(levels(unlist(NewsData$section2)))[unlist(NewsData$section2)]
+
+# # Data Normalisation
 # NewsDataN <- as.data.frame(lapply(NewsData[,-12], normalization))
-# 
-# NewsDataN$section <- NewsData[,12]
-# colnames(NewsDataN) <- colnames(NewsData)
-# 
-# trData <- NewsDataN[idx,]
+
+# trData <- NewsDataN[ idx,]
 # teData <- NewsDataN[-idx,]
-# 
-# nnFormula <- section ~ .
+
+# nnFormula <- section2 ~ .
 # nnModel2 <- neuralnet(formula=nnFormula, data=trData, hidden=5)
-# 
+
 # plot(nnModel2)
-# 
+
 # nnModel2Result <- compute(nnModel2, teData[,c(1:11)])
 # nnPrediction2 <- nnModel2Result$net.result
-# 
+
 # nndf <- data.frame(predict=nnPrediction2, real=teData["section"])
-# 
+
 # x <- seq(1:length(nnPrediction2))
 # plot(x=x, y=nnPrediction2, type="n", xlab="", ylab="value")
-# 
+
 # points(x, nnPrediction2, pch=4, col="red")
 # points(x, teData["section"], pch=1, col="blue")
-# 
+
 # legend("bottomright", legend=c("prediction", "answer"), pch=c(4,1))
-# 
+
 # cor(nnPrediction2, teData["section"])
