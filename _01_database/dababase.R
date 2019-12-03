@@ -23,6 +23,7 @@ types <- c('E','I','L','P','S','W')
 sections <- c('econ','IT','life_cult','politics','soc','world')
 tables <- c('NEWS_ECON', 'NEWS_IT', 'NEWS_LIFE_CULT', 'NEWS_POLITICS', 'NEWS_SOC', 'NEWS_WORLD')
 ####################################################################################################
+# Functions
 
 dbDisconnectAll <- function(){
   ile <- length(dbListConnections(MySQL())  )
@@ -45,7 +46,6 @@ cleanData <- function(df) {
   return(df)
 }
 
-# functions
 dbsend <- function(df, type, section, tab) {
   cat('dbsend()\n')
   len <- nrow(df)

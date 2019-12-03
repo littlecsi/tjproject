@@ -1,36 +1,17 @@
 ####################################################################################################
 # Library
-library(DBI)
-library(RMySQL)
 library(stringr)
 library(reshape2)
 library(ggplot2)
 
-####################################################################################################
-# DB Connection
-conn<-dbConnect(MySQL(), user="naver", password="naver1q2w3e4r", dbname="sch_naver",host="localhost")
+source("base/db.R")
 
 ####################################################################################################
 # Variable
-
 sections <- c("econ", "IT", "life_cult", "politics", "soc", "world")
 
 ####################################################################################################
 # Function
-
-dbDisconnectAll <- function(){
-    ile <- length(dbListConnections(MySQL())  )
-    lapply( dbListConnections(MySQL()), function(x) dbDisconnect(x) )
-    cat(sprintf("%s connection(s) closed.\n", ile))
-}
-
-## param : section and type(Comment or View)
-getSectionData <- function(section, type) {
-    query01 <- paste('select * from news_',section,' where newsid like "%',type,'%"', sep = '')
-    dfOne <- dbGetQuery(conn, query01)
-    return(dfOne)
-}
-
 getMonthlyCmt <- function(df) {
     len <- nrow(df)
     # cat("len:", len, "\n")
