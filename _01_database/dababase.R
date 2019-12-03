@@ -20,8 +20,16 @@ pwd <- 'naver'
 conn <- dbConnect(drv, url, id, pwd)
 
 ####################################################################################################
+# Initialise Variables
+ext <- '.xlsx'
+path <- 'D:/GitHub/tjproject/resources/'
+types <- c('E','I','L','P','S','W')
+sections <- c('econ','IT','life_cult','politics','soc','world')
+tables <- c('NEWS_ECON','NEWS_IT','NEWS_LIFE_CULT','NEWS_SOC','NEWS_WORLD')
+
+####################################################################################################
 # functions
-dbsend <- function(df, type, section) {
+dbsend <- function(df, type, section, tab) {
   cat('dbsend()\n')
   
   len <- nrow(df)
@@ -84,27 +92,50 @@ dbsend <- function(df, type, section) {
   
   for(l in c(1:len)) {
     # cat(NEWSID[l], '\n')
-    query <- paste("INSERT INTO NEWS_WORLD VALUES(\'", NEWSID[l], '\', ', NEWSRANK[l], ', \'', SRC[l], '\',\'', NEWSDATE[l], '\', ', NVIEW[l], ', ', NCOMMENT[l], ', ', CURR_CMT[l], ', ', DELETED[l], ', ', BROKEN[l], ', ', MALER[l], ', ', FEMALER[l], ', ', X10[l], ', ', X20[l], ', ', X30[l], ', ', X40[l], ', ', X50[l], ', ', X60[l], ")", sep='')
+    query <- paste("INSERT INTO ", tab, " VALUES(\'", NEWSID[l], '\', ', NEWSRANK[l], ', \'', SRC[l], '\',\'', NEWSDATE[l], '\', ', NVIEW[l], ', ', NCOMMENT[l], ', ', CURR_CMT[l], ', ', DELETED[l], ', ', BROKEN[l], ', ', MALER[l], ', ', FEMALER[l], ', ', X10[l], ', ', X20[l], ', ', X30[l], ', ', X40[l], ', ', X50[l], ', ', X60[l], ")", sep='')
     # cat(query, '\n')
     dbSendUpdate(conn, query)
   }
 }
 
 ####################################################################################################
-# Initialise Variables
-ext <- '.xlsx'
-path <- 'D:/GitHub/tjproject/resources/'
-type <- 'W'
-section <- 'world'
-
 # Main
-# fpath <- paste(path, section, '/2019_view_data_', section, ext, sep='')
-fpath <- paste(path, section, '/2019_comment_data_', section, ext, sep='')
-# df <- read.xlsx(fpath, 1, as.data.frame=T, header=T, encoding='UTF-8')
-# dbsend(df, type, section)
-
-for(i in c(1:10)) {
-  df <- read.xlsx(fpath, sheet=i, colNames=T, rowNames=F)
-  dbsend(df, type, section)
-  cat('-', i, '-\n')
+for(i in c(1:6)) {
+    type <- types[i]
+    section <- sections[i]
+    tab <- tables[i]
+    
+    cat(section, "\n")
+    
+    fpath <- paste(path, section, '/2018_view_data_', section, ext, sep='')
+    cat(fpath, "\n")
+    for(i in c(1:2)) {
+        df <- read.xlsx(fpath, sheet=i, colNames=T, rowNames=F)
+        dbsend(df, type, section, tab)
+        cat('-', i, '-\n')
+    }
+    
+    fpath <- paste(path, section, '/2018_comment_data_', section, ext, sep='')
+    cat(fpath, "\n")
+    for(i in c(1:2)) {
+        df <- read.xlsx(fpath, sheet=i, colNames=T, rowNames=F)
+        dbsend(df, type, section, tab)
+        cat('-', i, '-\n')
+    }
+    
+    fpath <- paste(path, section, '/2019_view_data_', section, ext, sep='')
+    cat(fpath, "\n")
+    for(i in c(1:10)) {
+      df <- read.xlsx(fpath, sheet=i, colNames=T, rowNames=F)
+      dbsend(df, type, section, tab)
+      cat('-', i, '-\n')
+    }
+    
+    fpath <- paste(path, section, '/2019_comment_data_', section, ext, sep='')
+    cat(fpath, "\n")
+    for(i in c(1:10)) {
+        df <- read.xlsx(fpath, sheet=i, colNames=T, rowNames=F)
+        dbsend(df, type, section, tab)
+        cat('-', i, '-\n')
+    }
 }
