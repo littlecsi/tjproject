@@ -8,12 +8,7 @@ library(openxlsx)
 
 # host : '%'를 넣으면 외부접속, 내부 접속일 경우는 localhost를 넣는다.
 ## localhost일 경우 포트를 지정하지 않아도 작동한다.
-conn<-dbConnect(MySQL(), user="naver", password="naver1q2w3e4r", dbname="sch_naver",host="localhost")
-
-# Test용 dual 테이블
-## 결과가 나오면 정상적으로 작동하는 것을 확인할 수 있다.
-query01 <- 'select power(2, 10) from dual'
-data <- dbGetQuery(conn, query01)
+conn<-dbConnect(MySQL(), user="naver", password="Naver1q2w3e4r!", dbname="naverdb",host="localhost")
 
 ####################################################################################################
 # Initialise Variables
