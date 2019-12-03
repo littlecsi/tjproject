@@ -17,6 +17,13 @@ sections <- c("econ", "IT", "life_cult", "politics", "soc", "world")
 
 ####################################################################################################
 # Function
+
+dbDisconnectAll <- function(){
+    ile <- length(dbListConnections(MySQL())  )
+    lapply( dbListConnections(MySQL()), function(x) dbDisconnect(x) )
+    cat(sprintf("%s connection(s) closed.\n", ile))
+}
+
 ## param : section and type(Comment or View)
 getSectionData <- function(section, type) {
     query01 <- paste('select * from news_',section,' where newsid like "%',type,'%"', sep = '')
@@ -66,6 +73,7 @@ Ldf <- getSectionData(sections[3], 'C')
 Pdf <- getSectionData(sections[4], 'C')
 Sdf <- getSectionData(sections[5], 'C')
 Wdf <- getSectionData(sections[6], 'C')
+
 
 # Get Montly Total Comments of each section
 EmCmtTotal <- getMonthlyCmt(Edf)
@@ -128,14 +136,37 @@ CmtPlot1 <- ggplot(CmtPlotData1, aes(Month, value, col=variable)) +
     labs(title="Total Number of Comments per Month (2018.11 ~ 2019.10)")
 CmtPlot1
 
-# 귀무 가설 : '정치'와 'IT' 댓글 수의 의존관계는 서로 없다. 
-chisq.test(x = PmCmtTotal, y = ImCmtTotal)
-PmCmtTotal
-ImCmtTotal
-WmCmtTotal
-SmCmtTotal
 
 # 귀무 가설 : '정치'와 '사회'간의 분포의 모양이 동질적이다.
-fisher.test(x=ImCmtTotal, y=SmCmtTotal)
+var.test(x=PmCmtTotal, y=SmCmtTotal)
+# 	F test to compare two variances
+# 
+# data:  PmCmtTotal and SmCmtTotal
+# F = 1.5308, num df = 11, denom df = 11, p-value = 0.4917
+# alternative hypothesis: true ratio of variances is not equal to 1
+# 95 percent confidence interval:
+#  0.440669 5.317370
+# sample estimates:
+# ratio of variances 
+#           1.530752
 
-fisher.test(x=EmCmtTotal, y=WmCmtTotal)
+# p-value(0.4917) > 0.05 이므로 귀무 가설 채택.
+# '정치'와 '사회'간의 분포 형태가 동질하다고 볼 수 있다.
+
+# 귀무 가설 : '경제'와 '세계'간의 분포의 모양이 동질적이다.
+var.test(x=EmCmtTotal, y=WmCmtTotal)
+# F test to compare two variances
+# 
+# data:  EmCmtTotal and WmCmtTotal
+# F = 1.2977, num df = 11, denom df = 11, p-value = 0.6731
+# alternative hypothesis: true ratio of variances is not equal to 1
+# 95 percent confidence interval:
+#     0.3735875 4.5079248
+# sample estimates:
+#     ratio of variances 
+# 1.29773 
+
+# p-value(0.6737) > 0.05 이므로 귀무 가설 채택.
+# '경제'와 '세계'간의 분포 형태가 동질하다고 볼 수 있다.
+
+dbDisconnectAll()
