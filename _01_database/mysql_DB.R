@@ -23,6 +23,28 @@ types <- c('E','I','L','P','S','W')
 sections <- c('econ','IT','life_cult','politics','soc','world')
 tables <- c('NEWS_ECON', 'NEWS_IT', 'NEWS_LIFE_CULT', 'NEWS_POLITICS', 'NEWS_SOC', 'NEWS_WORLD')
 ####################################################################################################
+
+dbDisconnectAll <- function(){
+  ile <- length(dbListConnections(MySQL())  )
+  lapply( dbListConnections(MySQL()), function(x) dbDisconnect(x) )
+  cat(sprintf("%s connection(s) closed.\n", ile))
+}
+
+# clean function
+## param : data frame
+cleanData <- function(df) {
+  df$title <- str_replace_all(df$title, '\"', ' ')
+  df$title <- str_replace_all(df$title, ',', ' ')
+  df$title <- str_replace_all(df$title, '\'', ' ')
+  df$title <- str_replace_all(df$title, '\t', '')
+  
+  df$subti <- str_replace_all(df$subti, '\"', ' ')
+  df$subti <- str_replace_all(df$subti, ',', ' ')
+  df$subti <- str_replace_all(df$subti, '\'', ' ')
+  df$subti <- str_replace_all(df$subti, '\t', '')
+  return(df)
+}
+
 # functions
 dbsend <- function(df, type, section, tab) {
   cat('dbsend()\n')
@@ -92,7 +114,6 @@ dbsend <- function(df, type, section, tab) {
 ####################################################################################################
 # Main
 for(i in c(1:6)) {
-  i <- 4
   type <- types[i]
   section <- sections[i]
   tab <- tables[i]
@@ -126,19 +147,7 @@ for(i in c(1:6)) {
   }
 }
 
-cleanData <- function(df) {
-  df$title <- str_replace_all(df$title, '\"', ' ')
-  df$title <- str_replace_all(df$title, ',', ' ')
-  df$title <- str_replace_all(df$title, '\'', ' ')
-  df$title <- str_replace_all(df$title, '\t', '')
-  
-  df$subti <- str_replace_all(df$subti, '\"', ' ')
-  df$subti <- str_replace_all(df$subti, ',', ' ')
-  df$subti <- str_replace_all(df$subti, '\'', ' ')
-  df$subti <- str_replace_all(df$subti, '\t', '')
-  return(df)
-}
-
-
 query01 <- 'select * from news_politics'
 data <- dbGetQuery(conn, query01)
+
+dbDisconnectAll()
