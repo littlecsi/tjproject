@@ -25,7 +25,7 @@ ext <- '.xlsx'
 path <- 'D:/GitHub/tjproject/resources/'
 types <- c('E','I','L','P','S','W')
 sections <- c('econ','IT','life_cult','politics','soc','world')
-tables <- c('NEWS_ECON','NEWS_IT','NEWS_LIFE_CULT','NEWS_SOC','NEWS_WORLD')
+tables <- c('NEWS_ECON','NEWS_IT','NEWS_LIFE_CULT','NEWS_POLITICS','NEWS_SOC','NEWS_WORLD')
 
 ####################################################################################################
 # functions
