@@ -13,7 +13,7 @@ conn<-dbConnect(MySQL(), user="naver", password="naver1q2w3e4r", dbname="sch_nav
 # Test용 dual 테이블
 ## 결과가 나오면 정상적으로 작동하는 것을 확인할 수 있다.
 query01 <- 'select power(2, 10) from dual'
-data <- dbGetQuery(con, query01)
+data <- dbGetQuery(conn, query01)
 
 ####################################################################################################
 # Initialise Variables
@@ -28,6 +28,8 @@ dbsend <- function(df, type, section, tab) {
   cat('dbsend()\n')
   len <- nrow(df)
   date <- df$date
+  TITLE <- df$title
+  SUBTITLE <- df$subti
   SRC <- df$source
   NEWSDATE <- c()
   for(l in c(1:len)) {
@@ -82,7 +84,7 @@ dbsend <- function(df, type, section, tab) {
   # cat(NEWSID, '\n')
   for(l in c(1:len)) {
     # cat(NEWSID[l], '\n')
-    query <- paste("INSERT INTO ", tab, " VALUES(\'", NEWSID[l], '\', ', NEWSRANK[l], ', \'', SRC[l], '\',\'', NEWSDATE[l], '\', ', NVIEW[l], ', ', NCOMMENT[l], ', ', CURR_CMT[l], ', ', DELETED[l], ', ', BROKEN[l], ', ', MALER[l], ', ', FEMALER[l], ', ', X10[l], ', ', X20[l], ', ', X30[l], ', ', X40[l], ', ', X50[l], ', ', X60[l], ")", sep='')
+    query <- paste("INSERT INTO ", tab, " VALUES(\'", NEWSID[l], '\', ', NEWSRANK[l], ', \'', TITLE[l], '\',\'', SUBTITLE[l], '\',\'',  SRC[l], '\',\'', NEWSDATE[l], '\', ', NVIEW[l], ', ', NCOMMENT[l], ', ', CURR_CMT[l], ', ', DELETED[l], ', ', BROKEN[l], ', ', MALER[l], ', ', FEMALER[l], ', ', X10[l], ', ', X20[l], ', ', X30[l], ', ', X40[l], ', ', X50[l], ', ', X60[l], ")", sep='')
     # cat(query, '\n')
     dbSendQuery(conn, query)
   }
@@ -90,31 +92,53 @@ dbsend <- function(df, type, section, tab) {
 ####################################################################################################
 # Main
 for(i in c(1:6)) {
+  i <- 4
   type <- types[i]
   section <- sections[i]
   tab <- tables[i]
   fpath <- paste(path, section, '/2018_view_data_', section, ext, sep='')
   for(i in c(1:2)) {
     df <- read.xlsx(fpath, sheet=i, colNames=T, rowNames=F)
+    df <- cleanData(df)
     dbsend(df, type, section, tab)
     cat('-', i, '-\n')
   }
   fpath <- paste(path, section, '/2018_comment_data_', section, ext, sep='')
   for(i in c(1:2)) {
     df <- read.xlsx(fpath, sheet=i, colNames=T, rowNames=F)
+    df <- cleanData(df)
     dbsend(df, type, section, tab)
     cat('-', i, '-\n')
   }
   fpath <- paste(path, section, '/2019_view_data_', section, ext, sep='')
   for(i in c(1:10)) {
     df <- read.xlsx(fpath, sheet=i, colNames=T, rowNames=F)
+    df <- cleanData(df)
     dbsend(df, type, section, tab)
     cat('-', i, '-\n')
   }
   fpath <- paste(path, section, '/2019_comment_data_', section, ext, sep='')
   for(i in c(1:10)) {
     df <- read.xlsx(fpath, sheet=i, colNames=T, rowNames=F)
+    df <- cleanData(df)
     dbsend(df, type, section, tab)
     cat('-', i, '-\n')
   }
 }
+
+cleanData <- function(df) {
+  df$title <- str_replace_all(df$title, '\"', ' ')
+  df$title <- str_replace_all(df$title, ',', ' ')
+  df$title <- str_replace_all(df$title, '\'', ' ')
+  df$title <- str_replace_all(df$title, '\t', '')
+  
+  df$subti <- str_replace_all(df$subti, '\"', ' ')
+  df$subti <- str_replace_all(df$subti, ',', ' ')
+  df$subti <- str_replace_all(df$subti, '\'', ' ')
+  df$subti <- str_replace_all(df$subti, '\t', '')
+  return(df)
+}
+
+
+query01 <- 'select * from news_politics'
+data <- dbGetQuery(conn, query01)
