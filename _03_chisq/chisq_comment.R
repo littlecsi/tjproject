@@ -63,12 +63,13 @@ getMonthlyCmt <- function(df) {
 
 ####################################################################################################
 # Main
-Edf <- getSectionData(sections[1], 'C')
-Idf <- getSectionData(sections[2], 'C')
-Ldf <- getSectionData(sections[3], 'C')
-Pdf <- getSectionData(sections[4], 'C')
-Sdf <- getSectionData(sections[5], 'C')
-Wdf <- getSectionData(sections[6], 'C')
+type <- 'C'
+Edf <- getSectionData(sections[1], type)
+Idf <- getSectionData(sections[2], type)
+Ldf <- getSectionData(sections[3], type)
+Pdf <- getSectionData(sections[4], type)
+Sdf <- getSectionData(sections[5], type)
+Wdf <- getSectionData(sections[6], type)
 
 # Get Montly Total Comments of each section
 EmCmtTotal <- getMonthlyCmt(Edf)
@@ -131,15 +132,12 @@ CmtPlot1 <- ggplot(CmtPlotData1, aes(Month, value, col=variable)) +
     labs(title="Total Number of Comments per Month (2018.11 ~ 2019.10)")
 CmtPlot1
 
-# 귀무 가설 : '정치'와 'IT' 댓글 수의 의존관계는 서로 없다. 
-chisq.test(x = PmCmtTotal, y = ImCmtTotal)
-PmCmtTotal
-ImCmtTotal
-WmCmtTotal
-SmCmtTotal
+# 귀무 가설 : '정치'와 'IT' 댓글 수의 의존관계는 서로 없다.
 
-# 귀무 가설 : '정치'와 '사회'간의 분포의 모양이 동질적이다.
-fisher.test(x=ImCmtTotal, y=SmCmtTotal)
+chisq.test(tmp_mx)
 
-fisher.test(x=EmCmtTotal, y=WmCmtTotal)
+tmp_mx <- matrix(c(ImCmtTotal/10000, LmCmtTotal/10000), byrow = T, ncol = 12)
+chisq.test(tmp_mx)
 
+
+dbDisconnectAll()
