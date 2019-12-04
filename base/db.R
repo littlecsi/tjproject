@@ -3,9 +3,14 @@
 library(DBI)
 library(RMySQL)
 
+####################################################################################################
+# Variable
+
+sections <- c("econ", "IT", "life_cult", "politics", "soc", "world")
+
 # host : '%'를 넣으면 외부접속, 내부 접속일 경우는 localhost를 넣는다.
 ## localhost일 경우 포트를 지정하지 않아도 작동한다.
-conn<-dbConnect(MySQL(), user="naver", password="Naver1q2w3e4r!", dbname="naverdb", host="localhost")
+conn <- dbConnect(MySQL(), user="naver", password="Naver1q2w3e4r!", dbname="naverdb", host="localhost")
 
 ####################################################################################################
 ### Functions

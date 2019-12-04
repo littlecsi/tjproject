@@ -1,14 +1,10 @@
 ####################################################################################################
 # Library
-library(DBI)
-library(RMySQL)
 library(stringr)
 library(reshape2)
 library(ggplot2)
 
-####################################################################################################
-# DB Connection
-conn<-dbConnect(MySQL(), user="naver", password="Naver1q2w3e4r!", dbname="sch_naver",host="localhost")
+source("base/db.R")
 
 ####################################################################################################
 # Variable

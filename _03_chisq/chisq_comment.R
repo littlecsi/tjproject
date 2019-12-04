@@ -13,6 +13,13 @@ sections <- c("econ", "IT", "life_cult", "politics", "soc", "world")
 
 ####################################################################################################
 # Function
+
+dbDisconnectAll <- function(){
+    ile <- length(dbListConnections(MySQL())  )
+    lapply( dbListConnections(MySQL()), function(x) dbDisconnect(x) )
+    cat(sprintf("%s connection(s) closed.\n", ile))
+}
+
 ## param : section and type(Comment or View)
 getSectionData <- function(section, type) {
     query01 <- paste('select * from news_',section,' where newsid like "%',type,'%"', sep = '')
