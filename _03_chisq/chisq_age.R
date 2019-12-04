@@ -119,16 +119,8 @@ CmtPlot1 <- ggplot(CmtPlotData1, aes(Month, value, col=variable)) +
     labs(title="Total Number of Comments per Month (2018.11 ~ 2019.10)")
 CmtPlot1
 
+# E, I, L, P, S, W
 # 귀무 가설 : '정치'와 'IT' 댓글 수의 의존관계는 서로 없다. 
 chisq.test(x = PmCmtTotal, y = ImCmtTotal)
-PmCmtTotal
-ImCmtTotal
-WmCmtTotal
-SmCmtTotal
-
-# 귀무 가설 : '정치'와 '사회'간의 분포의 모양이 동질적이다.
-fisher.test(x=ImCmtTotal, y=SmCmtTotal)
-
-fisher.test(x=EmCmtTotal, y=WmCmtTotal)
 
 dbDisconnectAll()

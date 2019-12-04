@@ -16,7 +16,7 @@ conn <- dbConnect(MySQL(), user="naver", password="Naver1q2w3e4r!", dbname="nave
 ### Functions
 
 # DB에서 데이터를 가지고 오는 함수 입니다.
-getSectionData <- function(section, type) {
+getSectionData <- function(section, type, col) {
     query01 <- paste('select * from news_',section,' where newsid like "%',type,'%"', sep = '')
     dfOne <- dbGetQuery(conn, query01)
     return(dfOne)

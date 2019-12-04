@@ -134,10 +134,7 @@ CmtPlot1
 
 # 귀무 가설 : '정치'와 'IT' 댓글 수의 의존관계는 서로 없다.
 
-chisq.test(tmp_mx)
-
 tmp_mx <- matrix(c(ImCmtTotal/10000, LmCmtTotal/10000), byrow = T, ncol = 12)
 chisq.test(tmp_mx)
-
 
 dbDisconnectAll()
