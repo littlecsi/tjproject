@@ -22,6 +22,18 @@ getSectionData <- function(section, type, col) {
     return(dfOne)
 }
 
+# 테스트 데이터를 가지고 오는 함수
+getTestData <- function(section, type, col) {
+  query01 <- paste('select * from news_',section,' where newsid like "%',type,'201911%"', sep = '')
+  dfOne <- dbGetQuery(conn, query01)
+  return(dfOne)
+}
+
+# Query 문을 매개변수로 하여 직접 쿼리를 입력하는 함수
+getDataWithQuery <- function(queryTxt) {
+  return(dbGetQuery(conn, queryTxt))
+}
+
 # DB로 데이터 프레임 집어넣기 함수 입니다.
 dbsend <- function(df, type, section, tab) {
   cat('dbsend()\n')

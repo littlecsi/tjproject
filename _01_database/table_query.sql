@@ -141,3 +141,4 @@ CREATE TABLE NEWS_WORLD(
     X60 INT
 );
 
+commit;
