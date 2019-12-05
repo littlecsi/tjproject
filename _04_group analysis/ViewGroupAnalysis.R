@@ -8,6 +8,7 @@ source("base/db.R")
 
 ####################################################################################################
 # Variable
+type <- "V"
 
 ####################################################################################################
 # Function
@@ -50,12 +51,12 @@ getMonthlyView <- function(df) {
 
 ##################################################
 ### Comment
-Edf <- getSectionData(sections[1], 'V')
-Idf <- getSectionData(sections[2], 'V')
-Ldf <- getSectionData(sections[3], 'V')
-Pdf <- getSectionData(sections[4], 'V')
-Sdf <- getSectionData(sections[5], 'V')
-Wdf <- getSectionData(sections[6], 'V')
+Edf <- getSectionData(sections[1], type)
+Idf <- getSectionData(sections[2], type)
+Ldf <- getSectionData(sections[3], type)
+Pdf <- getSectionData(sections[4], type)
+Sdf <- getSectionData(sections[5], type)
+Wdf <- getSectionData(sections[6], type)
 
 
 # Get Montly Total Comments of each section

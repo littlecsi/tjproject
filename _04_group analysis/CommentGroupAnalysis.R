@@ -8,6 +8,7 @@ source("base/db.R")
 
 ####################################################################################################
 # Variable
+type <- "C"
 
 ####################################################################################################
 # Function
@@ -50,12 +51,12 @@ getMonthlyCmt <- function(df) {
 
 ##################################################
 ### Comment
-Edf <- getSectionData(sections[1], 'C')
-Idf <- getSectionData(sections[2], 'C')
-Ldf <- getSectionData(sections[3], 'C')
-Pdf <- getSectionData(sections[4], 'C')
-Sdf <- getSectionData(sections[5], 'C')
-Wdf <- getSectionData(sections[6], 'C')
+Edf <- getSectionData(sections[1], type)
+Idf <- getSectionData(sections[2], type)
+Ldf <- getSectionData(sections[3], type)
+Pdf <- getSectionData(sections[4], type)
+Sdf <- getSectionData(sections[5], type)
+Wdf <- getSectionData(sections[6], type)
 
 
 # Get Montly Total Comments of each section

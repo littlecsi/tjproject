@@ -52,7 +52,7 @@ chkElem <- function(elem) {
 
 ####################################################################################################
 # Crawling
-remDr <- remoteDriver(remoteServerAdd='localhost', port=4446L, browserName='chrome')
+remDr <- remoteDriver(remoteServerAdd='localhost', port=4444L, browserName='chrome')
 remDr$open()
 
 year <- as.character(c(2018:2019))
@@ -62,8 +62,8 @@ day <- c(c('01','02','03','04','05','06','07','08','09'), 10:31)
 
 sleepT <- 1/4
 
-startDate <- '20181101'
-stopDate <- '20191031'
+startDate <- '20191101'
+stopDate <-  '20191130'
 
 startFlag = F
 finFlag = F
@@ -94,7 +94,7 @@ for(y in year) {
             Sys.setenv("no_proxy"=T)        # To fix some 
             Sys.setenv("no_proxy"=1)        # Proxy problems
             
-            url <- 'https://news.naver.com/main/ranking/popularDay.nhn?rankingType=popular_day&sectionId=105&date='
+            url <- 'https://news.naver.com/main/ranking/popularDay.nhn?rankingType=popular_day&sectionId=102&date='
             
             dat <- paste(y, m, d, sep='')
             
@@ -140,7 +140,7 @@ for(y in year) {
                 oid <- u %>% str_extract('oid=[0-9]+') %>% str_sub(5)
                 aid <- u %>% str_extract('aid=[0-9]+') %>% str_sub(5)
                 
-                url <- paste(url, 'm_view=1&rankingType=popular_day&oid=', oid,'&aid=', aid, '&date=', dat, '&type=1&rankingSectionId=105&rankingSeq=', i, sep='')
+                url <- paste(url, 'm_view=1&rankingType=popular_day&oid=', oid,'&aid=', aid, '&date=', dat, '&type=1&rankingSectionId=102&rankingSeq=', i, sep='')
                 
                 remDr$navigate(url)
                 
@@ -225,7 +225,7 @@ for(y in year) {
             df <- rbind(df, tdf)
         }
         sheName <- paste(month_eng[mcnt], sep='')
-        file <- paste('D:/GitHub/tjproject/resources/', y, '_view_data_IT.xlsx', sep='')
+        file <- paste('D:/GitHub/tjproject/resources/', y, '_view_data_soc.xlsx', sep='')
         write.xlsx(df, file, sheetName=sheName, col.names=T, row.names=F, append=T, password=NULL, showNA=T)
     }
 }
