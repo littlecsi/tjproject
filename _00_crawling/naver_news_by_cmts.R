@@ -94,7 +94,7 @@ for(y in year) {
             Sys.setenv("no_proxy"=T)        # To fix some 
             Sys.setenv("no_proxy"=1)        # Proxy problems
             
-            url <- 'https://news.naver.com/main/ranking/popularMemo.nhn?rankingType=popular_memo&sectionId=102&date='
+            url <- 'https://news.naver.com/main/ranking/popularMemo.nhn?rankingType=popular_memo&sectionId=103&date='
             
             dat <- paste(y, m, d, sep='')
 
@@ -217,7 +217,7 @@ for(y in year) {
             df <- rbind(df, tdf)
         }
         sheName <- paste(month_eng[mcnt], sep='')
-        file <- paste('D:/GitHub/tjproject/resources/', y, '_comment_data_soc.xlsx', sep='')
+        file <- paste('D:/GitHub/tjproject/resources/', y, '_comment_data_life_cult.xlsx', sep='')
         write.xlsx(df, file, sheetName=sheName, col.names=T, row.names=F, append=T, password=NULL, showNA=T)
     }
 }
