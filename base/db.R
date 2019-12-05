@@ -16,14 +16,15 @@ conn <- dbConnect(MySQL(), user="naver", password="Naver1q2w3e4r!", dbname="nave
 ### Functions
 
 # DB에서 데이터를 가지고 오는 함수 입니다.
-getSectionData <- function(section, type, col) {
-    query01 <- paste('select * from news_',section,' where newsid like "%',type,'%"', sep = '')
+getSectionData <- function(section, type) {
+    query01 <- paste('select * from news_',section,' where newsid like "%',type,'%"',
+                     'and newsid not like "%1911%"', sep = '')
     dfOne <- dbGetQuery(conn, query01)
     return(dfOne)
 }
 
 # 테스트 데이터를 가지고 오는 함수
-getTestData <- function(section, type, col) {
+getTestData <- function(section, type) {
   query01 <- paste('select * from news_',section,' where newsid like "%',type,'201911%"', sep = '')
   dfOne <- dbGetQuery(conn, query01)
   return(dfOne)
