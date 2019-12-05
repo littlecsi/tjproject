@@ -132,9 +132,34 @@ CmtPlot1 <- ggplot(CmtPlotData1, aes(Month, value, col=variable)) +
     labs(title="Total Number of Comments per Month (2018.11 ~ 2019.10)")
 CmtPlot1
 
-# 귀무 가설 : '정치'와 'IT' 댓글 수의 의존관계는 서로 없다.
-
+# 귀무 가설 : 'IT'와 '생활'의 댓글수는 서로 의존관계가 없다. 
 tmp_mx <- matrix(c(ImCmtTotal/10000, LmCmtTotal/10000), byrow = T, ncol = 12)
 chisq.test(tmp_mx)
+# Pearson's Chi-squared test
+# 
+# data:  tmp_mx
+# X-squared = 4.1637, df = 11, p-value = 0.9649
+### p-value > 0.05, 귀무가설 채택
+### 'IT'와 '사회생활'의 댓글수는 서로 의존관계가 없다. 
+
+# 귀무 가설 : '사회'와 '정치'의 댓글수는 서로 의존관계가 없다. 
+tmp_mx <- matrix(c(SmCmtTotal/10000, PmCmtTotal/10000), byrow = T, ncol = 12)
+chisq.test(tmp_mx)
+# Pearson's Chi-squared test
+# 
+# data:  tmp_mx
+# X-squared = 22.099, df = 11, p-value = 0.02362
+### p-value < 0.05, 귀무가설 기각 
+### '사회'와 '정치'의 댓글수는 서로 의존관계가 있다.
+
+# 귀무 가설 : '세계'와 '경제'의 댓글수는 서로 의존관계가 없다. 
+tmp_mx <- matrix(c(WmCmtTotal/10000, EmCmtTotal/10000), byrow = T, ncol = 12)
+chisq.test(tmp_mx)
+# Pearson's Chi-squared test
+# 
+# data:  tmp_mx
+# X-squared = 18.374, df = 11, p-value = 0.0733
+### p-value > 0.05, 귀무가설 채택 
+### '세계'와 '경제'의 댓글수는 서로 의존관계가 없다.
 
 dbDisconnectAll()
