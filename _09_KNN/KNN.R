@@ -20,6 +20,7 @@ addGender <- function(data) {
     return(data)
 }
 
+# data frame에 댓글 수가 우세한 연령대 컬럼 추가
 addAge <- function(data) {
     data$age <- 99
     for(i in c(1:nrow(data))) {
