@@ -142,7 +142,7 @@ for(i in c(1:6)) {
   }
 }
 
-query01 <- 'select * from news_politics'
-data <- dbGetQuery(conn, query01)
+# query01 <- 'select * from news_politics'
+# data <- dbGetQuery(conn, query01)
 
 dbDisconnectAll()

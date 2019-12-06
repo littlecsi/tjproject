@@ -1,6 +1,6 @@
 use naverdb;
 
--- ALTER USER 'naver'@'localhost' IDENTIFIED with mysql_native_password BY 'Naver1q2w3e4r!';
+ALTER USER 'naver'@'localhost' IDENTIFIED with mysql_native_password BY 'Naver1q2w3e4r!';
 
 -- DROP TABLE NEWS_POLITICS;
 -- DROP TABLE NEWS_ECON;
