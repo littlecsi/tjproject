@@ -80,12 +80,6 @@ train <- training[tIdx, ]
 tmp <- training[-tIdx, ]
 valid <- na.omit(tmp[idx, ])
 
-# train 산점도 : train data와 test, valid dat와 비슷한 경향을 보임을 알 수 있다. 
-plot(formula = gender ~ age, data = train, col = alpha(c('purple', 'blue'), 0.7)[train$cate], main = 'train = Classification Category')
-
-points(formula = gender ~ age, data = valid, pch = 17, cex = 1.2, col = 'red')
-points(formula = gender ~ age, data = test, pch = 15, cex = 1.2, col = 'orange')
-
 # 입력x과 출력y 데이터로 분리
 
 train_x <- train[, -1]
@@ -95,6 +89,12 @@ test_x <- test[, -1]
 train_y <- train[, 1]
 valid_y <- valid[, 1]
 test_y <- test[, 1]
+
+# train 산점도 : train data와 test, valid dat와 비슷한 경향을 보임을 알 수 있다. 
+plot(formula = gender ~ age, data = train, col = alpha(c('purple', 'blue'), 0.7)[train$cate], main = 'train = Classification Category')
+
+points(formula = gender ~ age, data = valid, pch = 17, cex = 1.2, col = 'red')
+points(formula = gender ~ age, data = test, pch = 15, cex = 1.2, col = 'orange')
 
 # knn 알고리즘 적용하기(k = 1)
 # k = 1 일 때

@@ -64,7 +64,7 @@ gender_type_res <- hclust(gender_type_dist , method="ave") # 평균 연결 방�
 plot(gender_type_res, hang = -1, main = 'Gender and Category Cluster Dendrogram')
 rect.hclust(gender_type_res, k = 4, border = rainbow(4))
 
-# K개로 군집 뷴류를 하기 위한 적정 K값 찾기
+# K개로 군집 분류를 하기 위한 적정 K값 찾기
 ## kmeans 함수
 gender_kmeans <- kmeans(target, 4)
 gender_kmeans
