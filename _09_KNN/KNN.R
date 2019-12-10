@@ -96,7 +96,7 @@ table(knn_21, valid_y)
 
 accuracy_21 <- sum(knn_21 == valid_y) / length(valid_y)
 accuracy_21
-# [1] 0.9178977
+# [1] 0.9099943
 
 # 최적의 k 값 구해보기
 # k가 1부터 train 행 수까지 변화할 때 분류 정확도 구하기
@@ -140,7 +140,7 @@ maxdata
 
 min_position <- min(which(valid_k$accuracy == maxdata))
 min_position
-# [1] 22
+# [1] 105
 
 # min_position의 값과 그래프에서 확인해 보면 적정 k값을 확인할 수 있다.
 # 그럼 이제 k가 min_position의 값을 가질 때 모델이 얼마나 분류가 잘 되는지 test 데이터를 이용해서 표현해보자.
@@ -161,22 +161,22 @@ result[1, 2] <- sum(ifelse(test_y == "S" & knn_optimization == "L", 1, 0))
 result[2, 2] <- sum(ifelse(test_y == "L" & knn_optimization == "S", 1, 0))
 
 result
-#       clsf_S clsf_L
-# real_S   2140     44
-# real_L   1105    250
+# clsf_S clsf_L
+# real_S   2226     43
+# real_L   1099    261
 
 # 최종 정확도 계산하기
 table(prediction=knn_optimization, answer=test_y)
 # answer
 # prediction    L    S
-# L         1105    44
-# S         250     2140
+# L 1099   43
+# S  261 2226
 
 # 해석
 
 # 정확도
 accuracy <- sum(knn_optimization == test_y) / sum(result)
 accuracy
-# [1] 0.9169257
+# [1] 0.9162304
 
 dbDisconnectAll()
