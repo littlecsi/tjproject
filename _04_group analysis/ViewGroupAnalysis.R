@@ -50,7 +50,7 @@ getMonthlyView <- function(df) {
 # Main
 
 ##################################################
-### Comment
+### View
 Edf <- getSectionData(sections[1], type)
 Idf <- getSectionData(sections[2], type)
 Ldf <- getSectionData(sections[3], type)
@@ -59,7 +59,7 @@ Sdf <- getSectionData(sections[5], type)
 Wdf <- getSectionData(sections[6], type)
 
 
-# Get Montly Total Comments of each section
+# Get Montly Total Views of each section
 EmViewTotal <- getMonthlyView(Edf)
 ImViewTotal <- getMonthlyView(Idf)
 LmViewTotal <- getMonthlyView(Ldf)
@@ -77,7 +77,7 @@ ViewTotaldf <- data.frame(
     World=WmViewTotal
 )
 ViewTotaldf$Month <- c("Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec")
-# Economy       IT Life_Cult  Politics   Society    World Month
+#      Economy       IT Life_Cult  Politics   Society    World Month
 # 1  100360767 24318368  66185551  94377073 224854699 56742533   Jan
 # 2   82605339 26571839  60148342  81224742 195040992 52918607   Feb
 # 3   92725836 22961125  81840238 102367831 274495875 69620547   Mar
@@ -92,7 +92,7 @@ ViewTotaldf$Month <- c("Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oc
 # 12 106837908 26320105  88204415  45959082 242464417 74342050   Dec
 
 ViewPlotData1 <- melt(ViewTotaldf, id.vars="Month")
-# Month  variable     value
+#    Month  variable     value
 # 1    Jan   Economy 100360767
 # 2    Feb   Economy  82605339
 # 3    Mar   Economy  92725836
@@ -121,34 +121,24 @@ ViewPlot1 <- ggplot(ViewPlotData1, aes(Month, value, col=variable)) +
     theme(axis.line=element_line(color="Black", size=1, linetype="solid"))
 ViewPlot1
 
-# 귀무 가설 : '정치'와 '사회'간의 분포의 모양이 동질적이다.
-var.test(x=PmViewTotal, y=SmViewTotal)
-# F test to compare two variances
-# 
-# data:  PmViewTotal and SmViewTotal
-# F = 0.13443, num df = 11, denom df = 11, p-value = 0.002414
-# alternative hypothesis: true ratio of variances is not equal to 1
-# 95 percent confidence interval:
-#     0.03869802 0.46695290
-# sample estimates:
-#     ratio of variances 
-# 0.1344253
+# 귀무 가설 : 두 뉴스 분야간의 분포의 모양이 동질적이다.
+resultDf <- data.frame(
+    Economy=c(0, 0, 0, 0, 0, 0), 
+    IT=c(0, 0, 0, 0, 0, 0), 
+    Life_Cult=c(0, 0, 0, 0, 0, 0), 
+    Politics=c(0, 0, 0, 0, 0, 0), 
+    Society=c(0, 0, 0, 0, 0, 0), 
+    World=c(0, 0, 0, 0, 0, 0))
+rownames(resultDf) <- c('Economy','IT','Life_Cult','Politics','Society','World')
 
-# p-value(0.002414) < 0.05 이므로 귀무 가설 기각.
-# '정치'와 '사회'간의 분포 형태가 동질하다고 볼 수 없다.
+for(i in c(1:6)) {
+    for(j in c(1:6)) {
+        test <- var.test(x=ViewTotaldf[,i], y=ViewTotaldf[,j])
+        resultDf[i,j] <- test$p.value
+    }
+}
 
-# 귀무 가설 : '경제'와 '세계'간의 분포의 모양이 동질적이다.
-var.test(x=EmViewTotal, y=WmViewTotal)
-# F test to compare two variances
-# 
-# data:  EmViewTotal and WmViewTotal
-# F = 3.3973, num df = 11, denom df = 11, p-value = 0.054
-# alternative hypothesis: true ratio of variances is not equal to 1
-# 95 percent confidence interval:
-#     0.9780036 11.8011635
-# sample estimates:
-#     ratio of variances 
-# 3.39729
+View(resultDf)
 
 # p-value(0.054) > 0.05 이므로 귀무 가설 채택.
 # '경제'와 '세계'간의 분포 형태가 동질하다고 볼 수 있다.

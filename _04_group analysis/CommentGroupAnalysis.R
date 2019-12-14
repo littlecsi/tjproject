@@ -121,34 +121,24 @@ CmtPlot1 <- ggplot(CmtPlotData1, aes(Month, value, col=variable)) +
 CmtPlot1
 
 
-# 귀무 가설 : '정치'와 '사회'간의 분포의 모양이 동질적이다.
-var.test(x=PmCmtTotal, y=SmCmtTotal)
-# 	F test to compare two variances
-# 
-# data:  PmCmtTotal and SmCmtTotal
-# F = 1.5308, num df = 11, denom df = 11, p-value = 0.4917
-# alternative hypothesis: true ratio of variances is not equal to 1
-# 95 percent confidence interval:
-#  0.440669 5.317370
-# sample estimates:
-# ratio of variances 
-#           1.530752
+# 귀무 가설 : 두 뉴스 분야간의 분포의 모양이 동질적이다.
+resultDf <- data.frame(
+    Economy=c(0, 0, 0, 0, 0, 0), 
+    IT=c(0, 0, 0, 0, 0, 0), 
+    Life_Cult=c(0, 0, 0, 0, 0, 0), 
+    Politics=c(0, 0, 0, 0, 0, 0), 
+    Society=c(0, 0, 0, 0, 0, 0), 
+    World=c(0, 0, 0, 0, 0, 0))
+rownames(resultDf) <- c('Economy','IT','Life_Cult','Politics','Society','World')
 
-# p-value(0.4917) > 0.05 이므로 귀무 가설 채택.
-# '정치'와 '사회'간의 분포 형태가 동질하다고 볼 수 있다.
+for(i in c(1:6)) {
+    for(j in c(1:6)) {
+        test <- var.test(x=CmtTotaldf[,i], y=CmtTotaldf[,j])
+        resultDf[i,j] <- test$p.value
+    }
+}
 
-# 귀무 가설 : '경제'와 '세계'간의 분포의 모양이 동질적이다.
-var.test(x=EmCmtTotal, y=WmCmtTotal)
-# F test to compare two variances
-# 
-# data:  EmCmtTotal and WmCmtTotal
-# F = 1.2977, num df = 11, denom df = 11, p-value = 0.6731
-# alternative hypothesis: true ratio of variances is not equal to 1
-# 95 percent confidence interval:
-#     0.3735875 4.5079248
-# sample estimates:
-#     ratio of variances 
-# 1.29773 
+View(resultDf)
 
 # p-value(0.6737) > 0.05 이므로 귀무 가설 채택.
 # '경제'와 '세계'간의 분포 형태가 동질하다고 볼 수 있다.
