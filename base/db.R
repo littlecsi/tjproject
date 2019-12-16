@@ -2,6 +2,7 @@
 ### Library
 library(DBI)
 library(RMySQL)
+library(progress)
 
 ####################################################################################################
 # Variable
@@ -114,6 +115,14 @@ cleanData <- function(df) {
   df$subti <- str_replace_all(df$subti, '\'', ' ')
   df$subti <- str_replace_all(df$subti, '\t', '')
   return(df)
+}
+
+# Normalize Function
+## Min-Max Algorithm
+## param : vector
+## return : Normalized Vector
+normalize <- function(x) { 
+  return((x - min(x)) / (max(x) - min(x)))
 }
 
 # 모든 connection을 닫아 줍니다.

@@ -106,12 +106,13 @@ accuracy_21
 # 분류 정확도 사전 할당
 accuracy_k <- NULL
 
+cnt <- 150
 # kk가 1부터 train 행 수까지 증가할 때 (반복문)
 pb <- progress_bar$new(
-    format="[:bar] :current/:total (:percent)", total=250
+    format="[:bar] :current/:total (:percent)", total=cnt
 )
 
-for(idx in c(1:250)){
+for(idx in c(1:cnt)){
     # k가 kk일 때 knn 적용하기
     knn_k <- knn(train = train_x, test = valid_x, cl = train_y, k = idx)
     # 분류 정확도 계산하기
@@ -123,10 +124,10 @@ for(idx in c(1:250)){
 # [=========>----------------------------------------------------] 499/4188 ( 12%)
 # Error in knn(train = train_x, test = valid_x, cl = train_y, k = idx) : 
 #     too many ties in knn
-## 500 이상의 k 값이 에러가 뜨므로, 250까지로 제한해 본다.
+## 500 이상의 k 값이 에러가 뜨므로, 150까지로 제한해 본다.
 
 # k에 따른 분류 정확도 데이터 생성
-valid_k <- data.frame(k = c(1:250), accuracy = accuracy_k)
+valid_k <- data.frame(k = c(1:cnt), accuracy = accuracy_k)
 colnames(valid_k)
 
 # k에 따른 분류 정확도 그래프 그리기

@@ -132,42 +132,34 @@ CmtPlot1 <- ggplot(CmtPlotData1, aes(Month, value, col=variable)) +
     labs(title="Total Number of Comments per Month (2018.11 ~ 2019.10)")
 CmtPlot1
 
-# 귀무 가설 : 'IT'와 '생활'의 댓글수는 서로 의존관계가 없다. 
-tmp_mx <- matrix(c(ImCmtTotal/10000, LmCmtTotal/10000), byrow = T, ncol = 12)
-chisq.test(tmp_mx)
-# Pearson's Chi-squared test
-# 
-# data:  tmp_mx
-# X-squared = 4.1637, df = 11, p-value = 0.9649
-### p-value > 0.05, 귀무가설 채택
-### 'IT'와 '사회생활'의 댓글수는 서로 의존관계가 없다. 
+# without month columns
+chi_df <- CmtTotaldf[, -7]
 
-# 귀무 가설 : '사회'와 '정치'의 댓글수는 서로 의존관계가 없다. 
-tmp_mx <- matrix(c(SmCmtTotal/10000, PmCmtTotal/10000), byrow = T, ncol = 12)
-chisq.test(tmp_mx)
-# Pearson's Chi-squared test
-# 
-# data:  tmp_mx
-# X-squared = 22.099, df = 11, p-value = 0.02362
-### p-value < 0.05, 귀무가설 기각 
-### '사회'와 '정치'의 댓글수는 서로 의존관계가 있다.
+# init data frame
+res_df <- data.frame(
+    Economy=c(0), 
+    IT=c(0), 
+    Life_Cult=c(0), 
+    Politics=c(0), 
+    Society=c(0), 
+    World=c(0))
 
-# 귀무 가설 : '세계'와 '경제'의 댓글수는 서로 의존관계가 없다. 
-tmp_mx <- matrix(c(WmCmtTotal/10000, EmCmtTotal/10000), byrow = T, ncol = 12)
-chisq.test(tmp_mx)
-# Pearson's Chi-squared test
-# 
-# data:  tmp_mx
-# X-squared = 18.374, df = 11, p-value = 0.0733
-### p-value > 0.05, 귀무가설 채택 
-### '세계'와 '경제'의 댓글수는 서로 의존관계가 없다.
+# chi square test
+# 귀무 가설 : 각 카테고리의 댓글 수는 일년 평균의 댓글수와 차이가 없다.
+for(i in c(1:6)) {
+    testing <- cbind(chi_df[,i]/10000, rep(sum(chi_df[,i]) / 12, 12)/10000)
+    res_df[i] <- chisq.test(testing, correct = F)$p.value
+}
 
-# IT    !=  생활
-# 생활  ~=  정치
-# 세계  != 경제
+res_df
+#       Economy        IT       Life_Cult          Politics             Society      World
+# 1 0.1171186   0.9994975     0.8414351 0.000000005044315   0.0000000007707113    0.07475777
 
-## IT 기사의 관심도가 높다고 생활 기사의 관심도가 높다고 볼 수 없다.
-## 생활 기사와 정치 기사의 관심도는 의존관계가 있다고 볼 수 있다.
-## 세계 기사와 경제 기사의 댓글 수는 서로 의존 관계가 없다.
+# 결론
+## 카이 제곱 검정 결과를 보아, IT와 문화, 경제, 세계는 p value가 0.05 이상으로,
+## 일년 평균의 댓글 수와 각 월의 댓글 수가 서로 차이가 없는것으로 나타았으며,
+## 정치, 사회는 p value가 0.05 이하로 귀무 가설이 기각되었다.
+## 이는 정치와 사회 카테고리의 댓글 수는 월별 차이가 있다고 볼 수 있다.
+## 그 이유는 선거철과 관련이 있다고 유추할 수 있다.
 
 dbDisconnectAll()
