@@ -84,4 +84,5 @@ plot(treeMod)
 rpartMod <- rpart(cat ~ ., data=train, method="class")
 rpartMod
 
-fancyRpartPlot(rpartMod, caption = NULL)
+fancyRpartPlot(rpartMod, main="rpart Tree Diagram", type=2, caption = "probability : (E, I, L, P, S, W)")
+fancyRpartPlot(rpartMod, main="rpart Tree Diagram", type=5, caption = "probability : (E, I, L, P, S, W)")

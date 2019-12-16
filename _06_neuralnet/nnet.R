@@ -6,6 +6,8 @@ library(devtools)
 library(nnet)
 library(neuralnet)
 
+library(ggplot2)
+
 # 시각화 R 코드 함수 다운로드
 source_url('https://gist.githubusercontent.com/fawda123/7471137/raw/466c1474d0a505ff044412703516c34f1a4684a5/nnet_plot_update.r')
 
@@ -144,6 +146,14 @@ plot.nnet(nnModel)
 nnPrediction <- predict(nnModel, teX, type="class")
 predTable <- table(nnPrediction, teData$section)
 predAccuracy <- cat(calcAcc(predTable), "%\n")
+
+df=data.frame(x=c(1:5), y=c(46.72, 50.53, 44.24, 56.92, 50.68))
+ggplot(data=df, mapping=aes(x=x, y=y, col=x, fill=x)) +
+  geom_col(position="identity", show.legend=F) +
+  geom_text(label=paste(df$y, "%"), nudge_y=2, color="black") +
+  geom_hline(aes(yintercept=mean(df$y))) +
+  geom_text(x=3, y=51, label=paste("mean :", mean(df$y)), check_overlap=T, color="Red") +
+  labs(title="nnet result", x="Tries", y="Percentage")
 
 ##################################################
 # neuralnet package

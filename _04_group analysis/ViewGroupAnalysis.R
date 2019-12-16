@@ -134,13 +134,12 @@ rownames(resultDf) <- c('Economy','IT','Life_Cult','Politics','Society','World')
 for(i in c(1:6)) {
     for(j in c(1:6)) {
         test <- var.test(x=ViewTotaldf[,i], y=ViewTotaldf[,j])
-        resultDf[i,j] <- test$p.value
+        resultDf[i,j] <- round(test$p.value, 4)
     }
 }
 
-View(resultDf)
+# View(resultDf)
 
-# p-value(0.054) > 0.05 이므로 귀무 가설 채택.
-# '경제'와 '세계'간의 분포 형태가 동질하다고 볼 수 있다.
+write.csv(resultDf, file='result.csv')
 
 dbDisconnectAll()
