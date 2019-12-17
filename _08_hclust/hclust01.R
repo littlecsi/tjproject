@@ -40,7 +40,7 @@ df <- rbind(Edf, Idf, Ldf, Pdf, Sdf, Wdf)
 
 df$cate <- substr(df$NEWSID, 1, 1)
 df <- df[,c(-1,-7)]
-df <- df[, c(6, 10:18)]
+df <- df[, c(2, 3, 6, 10:18)]
 
 # 군집화를 할때, Vector 메모리의 부족과,
 # 덴드로그램을 그릴때 세션이 Abort되어,
@@ -64,7 +64,7 @@ table(df$type)
 sampling <- df
 
 # smapling의 2 ~ 9 컬럼 : 성별과 나이
-target <- sampling[,2:9]
+target <- sampling[,4:11]
 # target된 데이터의 유클라디언 거리 측정
 gender_type_dist <- dist(target, 'euclidean')
 gender_type_res <- hclust(gender_type_dist , method="ave") # 평균 연결 방법
@@ -89,7 +89,7 @@ plot(1:10, wss, type="b",xlab = "Number of Clusters", ylab = "Within group sum o
 
 # 위 plot에서 완만해 지는 부분이 7로 보임
 # elbow point를 7로 설정
-elbow <- 7
+elbow <- 4
 
 # k-means군집 
 # library(graphics)
@@ -99,10 +99,10 @@ kms
 plot(target , col = kms$cluster)
 
 # Transpose : 군집을 위한 t()
-target <- t(sampling[,2:9])
+target <- t(sampling[,4:11])
 # target된 데이터의 유클라디언 거리 측정
-gender_type_dist <- dist(target, 'euclidean')
-gender_type_res_2 <- hclust(gender_type_dist , method="ave") # 평균 연결 방법
+gender_type_dist2 <- dist(target, 'euclidean')
+gender_type_res_2 <- hclust(gender_type_dist2 , method="ave") # 평균 연결 방법
 
 # 군집화된 데이터 시각화
 plot(gender_type_res_2, hang = -1, main = 'Gender and Category Cluster Dendrogram')
@@ -127,6 +127,11 @@ for(i in c(1:6)) {
     g1 <- subset(sampling, ghc == i)
     print(summary(g1[2:9]))
 }
+
+group_1 <- subset(sampling, ghc == 1)
+table(group_1$cate)
+group_2 <- subset(sampling, ghc == 2)
+table(group_2$cate)
 
 # 성별과 뉴스 분류와의 피어슨 상관계수
 cor(t(target), method = 'pearson')
