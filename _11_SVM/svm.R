@@ -97,3 +97,9 @@ param$best.model
 # cost:  4 8 16 
 # 
 # Number of Support Vectors:  49
+
+df=data.frame(x=c('vanilladot','rbfdot'), y=c(54.49,58.44))
+ggplot(data=df, mapping=aes(x=x, y=y, col=x, fill=x)) +
+  geom_col(position="identity", width=0.5, show.legend=F) +
+  geom_text(label=paste(df$y, "%"), nudge_y=2, color="black") +
+  labs(title="SVM result", x="kernel type", y="Percentage")
