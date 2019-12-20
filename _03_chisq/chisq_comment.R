@@ -8,25 +8,10 @@ source("base/db.R")
 
 ####################################################################################################
 # Variable
-
-sections <- c("econ", "IT", "life_cult", "politics", "soc", "world")
+type <- "C"
 
 ####################################################################################################
 # Function
-
-dbDisconnectAll <- function(){
-    ile <- length(dbListConnections(MySQL())  )
-    lapply( dbListConnections(MySQL()), function(x) dbDisconnect(x) )
-    cat(sprintf("%s connection(s) closed.\n", ile))
-}
-
-## param : section and type(Comment or View)
-getSectionData <- function(section, type) {
-    query01 <- paste('select * from news_',section,' where newsid like "%',type,'%"', sep = '')
-    dfOne <- dbGetQuery(conn, query01)
-    return(dfOne)
-}
-
 getMonthlyCmt <- function(df) {
     len <- nrow(df)
     # cat("len:", len, "\n")
@@ -63,13 +48,16 @@ getMonthlyCmt <- function(df) {
 
 ####################################################################################################
 # Main
-type <- 'C'
+
+##################################################
+### Comment
 Edf <- getSectionData(sections[1], type)
 Idf <- getSectionData(sections[2], type)
 Ldf <- getSectionData(sections[3], type)
 Pdf <- getSectionData(sections[4], type)
 Sdf <- getSectionData(sections[5], type)
 Wdf <- getSectionData(sections[6], type)
+
 
 # Get Montly Total Comments of each section
 EmCmtTotal <- getMonthlyCmt(Edf)

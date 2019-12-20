@@ -138,7 +138,7 @@ for(i in c(1:6)) {
     }
 }
 
-View(resultDf)
+resultDf
 
 write.csv(resultDf, file='result.csv')
 
