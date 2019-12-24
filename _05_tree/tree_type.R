@@ -61,7 +61,7 @@ for(i in c(1:nrow(tree_df))) {
 treeData <- tree_df[,-c(1,2,3,4)]
 
 # Create Training and Testing Data
-idx <- createDataPartition(y=treeData$cat, p=0.8, list=F)
+idx <- createDataPartition(y=treeData$cat, p=0.5, list=F)
 train <- treeData[idx,]
 test <- treeData[-idx,]
 
@@ -83,6 +83,15 @@ plot(treeMod)
 ### rpart package
 rpartMod <- rpart(cat ~ ., data=train, method="class")
 rpartMod
+
+confusionMatrix(factor(test$cat), predict(rpartMod, test, type = "class"))
+
+nrow(test)
+nrow(train)
+
+table(predict(rpartMod, test, type = "class"), test[, "cat"])
+
+
 
 fancyRpartPlot(rpartMod, main="rpart Tree Diagram", type=2, caption = "probability : (E, I, L, P, S, W)")
 fancyRpartPlot(rpartMod, main="rpart Tree Diagram", type=5, caption = "probability : (E, I, L, P, S, W)")

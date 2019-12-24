@@ -8,6 +8,8 @@ library(neuralnet)
 
 library(ggplot2)
 
+source("base/db.R")
+
 # 시각화 R 코드 함수 다운로드
 source_url('https://gist.githubusercontent.com/fawda123/7471137/raw/466c1474d0a505ff044412703516c34f1a4684a5/nnet_plot_update.r')
 
@@ -70,15 +72,17 @@ normalization <- function(x){
 # Main
 
 # Collect Data
-Edf <- getAllSectionData(sections[1])
-Idf <- getAllSectionData(sections[2])
-Ldf <- getAllSectionData(sections[3])
-Pdf <- getAllSectionData(sections[4])
-Sdf <- getAllSectionData(sections[5])
-Wdf <- getAllSectionData(sections[6])
+# Main
+type <- 'C'
+Edf <- getSectionData(sections[1], type)
+Idf <- getSectionData(sections[2], type)
+Ldf <- getSectionData(sections[3], type)
+Pdf <- getSectionData(sections[4], type)
+Sdf <- getSectionData(sections[5], type)
+Wdf <- getSectionData(sections[6], type)
 
 # Get needed columns
-reqCol <- c("currCmt", "deleted", "brokenPolicy", "maleRatio", "femaleRatio", "X10", "X20", "X30", "X40", "X50", "X60")
+reqCol <- c("CURR_CMT", "DELETED", "BROKEN", "MALER", "FEMALER", "X10", "X20", "X30", "X40", "X50", "X60")
 Edata <- getcolumns(Edf, reqCol)
 Idata <- getcolumns(Idf, reqCol)
 Ldata <- getcolumns(Ldf, reqCol)
@@ -114,6 +118,8 @@ colnames(NewsDataE)
 # [16] "Politics"     "Society"      "World"
 
 
+
+
 Elen <- nrow(subset(NewsDataE, section == "Economy"))
 Ilen <- nrow(subset(NewsDataE, section == "IT"))
 Llen <- nrow(subset(NewsDataE, section == "Life_Cult"))
@@ -121,8 +127,12 @@ Plen <- nrow(subset(NewsDataE, section == "Politics"))
 Slen <- nrow(subset(NewsDataE, section == "Society"))
 Wlen <- nrow(subset(NewsDataE, section == "World"))
 
-Ei <- sample(c(1:Elen), 0.8*Elen); Ii <- sample(c(1:Ilen), 0.8*Ilen); Li <- sample(c(1:Llen), 0.8*Llen);
-Pi <- sample(c(1:Plen), 0.8*Plen); Si <- sample(c(1:Slen), 0.8*Slen); Wi <- sample(c(1:Wlen), 0.8*Wlen);
+Ei <- sample(c(1:Elen), 0.8*Elen)
+Ii <- sample(c(1:Ilen), 0.8*Ilen)
+Li <- sample(c(1:Llen), 0.8*Llen)
+Pi <- sample(c(1:Plen), 0.8*Plen)
+Si <- sample(c(1:Slen), 0.8*Slen)
+Wi <- sample(c(1:Wlen), 0.8*Wlen);
 
 idx <- c(
     Ei,
@@ -147,7 +157,7 @@ nnPrediction <- predict(nnModel, teX, type="class")
 predTable <- table(nnPrediction, teData$section)
 predAccuracy <- cat(calcAcc(predTable), "%\n")
 
-df=data.frame(x=c(1:5), y=c(46.72, 50.53, 44.24, 56.92, 50.68))
+df=data.frame(x=c(1:5), y=c(50.05, 50.53, 44.24, 56.92, 50.68))
 ggplot(data=df, mapping=aes(x=x, y=y, col=x, fill=x)) +
   geom_col(position="identity", show.legend=F) +
   geom_text(label=paste(df$y, "%"), nudge_y=2, color="black") +
