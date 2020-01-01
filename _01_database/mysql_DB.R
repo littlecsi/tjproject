@@ -10,6 +10,8 @@ library(openxlsx)
 ## localhost일 경우 포트를 지정하지 않아도 작동한다.
 conn<-dbConnect(MySQL(), user="naver", password="Naver1q2w3e4r!", dbname="naverdb",host="localhost")
 
+
+
 ####################################################################################################
 # Initialise Variables
 ext <- '.xlsx'
@@ -41,7 +43,7 @@ cleanData <- function(df) {
 }
 
 # functions
-dbsend <- function(df, type, section, tab) {
+dbsend <- function(df, type, tab) {
   cat('dbsend()\n')
   len <- nrow(df)
   date <- df$date
@@ -116,28 +118,28 @@ for(i in c(1:6)) {
   for(i in c(1:2)) {
     df <- read.xlsx(fpath, sheet=i, colNames=T, rowNames=F)
     df <- cleanData(df)
-    dbsend(df, type, section, tab)
+    dbsend(df, type, tab)
     cat('-', i, '-\n')
   }
   fpath <- paste(path, section, '/2018_comment_data_', section, ext, sep='')
   for(i in c(1:2)) {
     df <- read.xlsx(fpath, sheet=i, colNames=T, rowNames=F)
     df <- cleanData(df)
-    dbsend(df, type, section, tab)
+    dbsend(df, type, tab)
     cat('-', i, '-\n')
   }
   fpath <- paste(path, section, '/2019_view_data_', section, ext, sep='')
   for(i in c(1:10)) {
     df <- read.xlsx(fpath, sheet=i, colNames=T, rowNames=F)
     df <- cleanData(df)
-    dbsend(df, type, section, tab)
+    dbsend(df, type, tab)
     cat('-', i, '-\n')
   }
   fpath <- paste(path, section, '/2019_comment_data_', section, ext, sep='')
   for(i in c(1:10)) {
     df <- read.xlsx(fpath, sheet=i, colNames=T, rowNames=F)
     df <- cleanData(df)
-    dbsend(df, type, section, tab)
+    dbsend(df, type, tab)
     cat('-', i, '-\n')
   }
 }
