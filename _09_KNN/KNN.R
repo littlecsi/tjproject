@@ -107,13 +107,13 @@ accuracy_21
 accuracy_k <- NULL
 
 cnt <- 150
-# kk가 1부터 train 행 수까지 증가할 때 (반복문)
+# k가 1부터 train 행 수까지 증가할 때 (반복문)
 pb <- progress_bar$new(
     format="[:bar] :current/:total (:percent)", total=cnt
 )
 
 for(idx in c(1:cnt)){
-    # k가 kk일 때 knn 적용하기
+    # k가 cnt일 때 knn 적용하기
     knn_k <- knn(train = train_x, test = valid_x, cl = train_y, k = idx)
     # 분류 정확도 계산하기
     accuracy_k <- c(accuracy_k, sum(knn_k == valid_y) / length(valid_y))
