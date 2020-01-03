@@ -80,7 +80,7 @@ SmViewTotal <- getMonthlyView(Sdf)
 WmViewTotal <- getMonthlyView(Wdf)
 
 # Combining above vectors into one data frame
-CmtTotaldf <- data.frame(
+ViewTotaldf <- data.frame(
     Economy=EmViewTotal,
     IT=ImViewTotal,
     Life_Cult=LmViewTotal,
@@ -88,7 +88,7 @@ CmtTotaldf <- data.frame(
     Society=SmViewTotal,
     World=WmViewTotal
 )
-CmtTotaldf$Month <- c("Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec")
+ViewTotaldf$Month <- c("Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec")
 # Economy       IT Life_Cult  Politics   Society    World Month
 # 1  100360767 24318368  66185551  94377073 224854699 56742533   Jan
 # 2   82605339 26571839  60148342  81224742 195040992 52918607   Feb
@@ -103,7 +103,7 @@ CmtTotaldf$Month <- c("Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct
 # 11 184035809 36879388  80367084 178246245 383292716 66053212   Nov
 # 12 106837908 26320105  88204415  45959082 242464417 74342050   Dec
 
-CmtPlotData1 <- melt(CmtTotaldf, id.vars="Month")
+ViewPlotData1 <- melt(ViewTotaldf, id.vars="Month")
 # Month  variable     value
 # 1    Jan   Economy 100360767
 # 2    Feb   Economy  82605339
@@ -115,18 +115,18 @@ CmtPlotData1 <- melt(CmtTotaldf, id.vars="Month")
 
 # Order the x variable into the order we want.
 xorder <- c("Nov","Dec","Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct")
-CmtPlotData1$Month <- factor(CmtPlotData1$Month, levels=xorder, labels=xorder)
+ViewPlotData1$Month <- factor(ViewPlotData1$Month, levels=xorder, labels=xorder)
 
 # Plotting the graph
 options("scipen" = 100)
-CmtPlot1 <- ggplot(CmtPlotData1, aes(Month, value, col=variable)) +
+ViewPlot1 <- ggplot(ViewPlotData1, aes(Month, value, col=variable)) +
     geom_point() + 
     geom_line(aes(color=variable, group=variable)) + 
-    labs(title="Total Number of Comments per Month (2018.11 ~ 2019.10)")
-CmtPlot1
+    labs(title="Total Number of Views per Month (2018.11 ~ 2019.10)")
+ViewPlot1
 
 # without month columns
-chi_df <- CmtTotaldf[, -7]
+chi_df <- ViewTotaldf[, -7]
 
 # init data frame
 res_df <- data.frame(
