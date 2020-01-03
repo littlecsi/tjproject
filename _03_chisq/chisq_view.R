@@ -56,9 +56,9 @@ getMonthlyView <- function(df) {
     x7 <- sum(as.numeric(x7)); x8 <- sum(as.numeric(x8)); x9 <- sum(as.numeric(x9))
     x10 <- sum(as.numeric(x10)); x11 <- sum(as.numeric(x11)); x12 <- sum(as.numeric(x12))
     
-    mCmtTotal <- c(x1, x2, x3, x4, x5, x6, x7, x8, x9, x10, x11, x12)
+    mViewTotal <- c(x1, x2, x3, x4, x5, x6, x7, x8, x9, x10, x11, x12)
     
-    return(mCmtTotal)
+    return(mViewTotal)
 }
 
 ####################################################################################################
@@ -72,21 +72,21 @@ Sdf <- getSectionData(sections[5], type)
 Wdf <- getSectionData(sections[6], type)
 
 # Get Montly Total Comments of each section
-EmCmtTotal <- getMonthlyView(Edf)
-ImCmtTotal <- getMonthlyView(Idf)
-LmCmtTotal <- getMonthlyView(Ldf)
-PmCmtTotal <- getMonthlyView(Pdf)
-SmCmtTotal <- getMonthlyView(Sdf)
-WmCmtTotal <- getMonthlyView(Wdf)
+EmViewTotal <- getMonthlyView(Edf)
+ImViewTotal <- getMonthlyView(Idf)
+LmViewTotal <- getMonthlyView(Ldf)
+PmViewTotal <- getMonthlyView(Pdf)
+SmViewTotal <- getMonthlyView(Sdf)
+WmViewTotal <- getMonthlyView(Wdf)
 
 # Combining above vectors into one data frame
 CmtTotaldf <- data.frame(
-    Economy=EmCmtTotal,
-    IT=ImCmtTotal,
-    Life_Cult=LmCmtTotal,
-    Politics=PmCmtTotal,
-    Society=SmCmtTotal,
-    World=WmCmtTotal
+    Economy=EmViewTotal,
+    IT=ImViewTotal,
+    Life_Cult=LmViewTotal,
+    Politics=PmViewTotal,
+    Society=SmViewTotal,
+    World=WmViewTotal
 )
 CmtTotaldf$Month <- c("Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec")
 # Economy       IT Life_Cult  Politics   Society    World Month
