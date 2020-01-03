@@ -27,7 +27,7 @@ getSectionData <- function(section, type) {
     return(dfOne)
 }
 
-getMonthlyCmt <- function(df) {
+getMonthlyView <- function(df) {
     len <- nrow(df)
     # cat("len:", len, "\n")
     x1 <- c(); x2 <- c(); x3 <- c(); x4 <- c(); x5 <- c(); x6 <- c();
@@ -72,12 +72,12 @@ Sdf <- getSectionData(sections[5], type)
 Wdf <- getSectionData(sections[6], type)
 
 # Get Montly Total Comments of each section
-EmCmtTotal <- getMonthlyCmt(Edf)
-ImCmtTotal <- getMonthlyCmt(Idf)
-LmCmtTotal <- getMonthlyCmt(Ldf)
-PmCmtTotal <- getMonthlyCmt(Pdf)
-SmCmtTotal <- getMonthlyCmt(Sdf)
-WmCmtTotal <- getMonthlyCmt(Wdf)
+EmCmtTotal <- getMonthlyView(Edf)
+ImCmtTotal <- getMonthlyView(Idf)
+LmCmtTotal <- getMonthlyView(Ldf)
+PmCmtTotal <- getMonthlyView(Pdf)
+SmCmtTotal <- getMonthlyView(Sdf)
+WmCmtTotal <- getMonthlyView(Wdf)
 
 # Combining above vectors into one data frame
 CmtTotaldf <- data.frame(
