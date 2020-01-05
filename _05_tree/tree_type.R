@@ -61,7 +61,7 @@ for(i in c(1:nrow(tree_df))) {
 treeData <- tree_df[,-c(1,2,3,4)]
 
 # Create Training and Testing Data
-idx <- createDataPartition(y=treeData$cat, p=0.5, list=F)
+idx <- createDataPartition(y=treeData$cat, p=0.8, list=F)
 train <- treeData[idx,]
 test <- treeData[-idx,]
 
